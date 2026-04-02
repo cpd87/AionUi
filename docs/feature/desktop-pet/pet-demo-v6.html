@@ -995,112 +995,57 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════
-       JUGGLING — cascade 三球杂耍
-       真实 cascade 轨迹：每球都是抛物线，左右手交替
-       手臂配合接抛动作，身体开心晃，大笑脸
+       JUGGLING — 还原用户设计稿：正面笑脸+三彩球抛物线
+       球：绿(左上) 黄(左中) 粉红(右中) → cascade 轨迹
   ══════════════════════════════════════════════════ -->
   <div class="item">
     <svg class="pet" viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs><style>
-        .jg-body {
-          transform-origin: 11px 17px;
-          animation: jg-lean 0.8s ease-in-out infinite;
-        }
-        /* 左臂随接/抛节奏上下 */
-        .jg-arm-l {
-          transform-origin: 5px 14px;
-          animation: jg-arm-l 0.8s ease-in-out infinite;
-        }
-        .jg-arm-r {
-          transform-origin: 17px 14px;
-          animation: jg-arm-r 0.8s ease-in-out infinite;
-        }
-        /*
-          真正 cascade 轨迹：
-          每球周期 = 2.4s（三球错开 0.8s）
-          0% 左手低位 → 抛出 → 50% 顶点 → 接落 → 100% 右手低位
-          下一周期从右手再抛回左手（mirror）
-          为简化用单程抛物，球到右手后瞬间传回左手
-        */
-        .jg-ba { animation: jg-casc 2.4s ease-in-out infinite; animation-delay: 0s; }
-        .jg-bb { animation: jg-casc 2.4s ease-in-out infinite; animation-delay: -0.8s; }
-        .jg-bc { animation: jg-casc 2.4s ease-in-out infinite; animation-delay: -1.6s; }
-        .jg-shadow {
-          transform-origin: 11px 25px;
-          animation: jg-shadow 0.8s ease-in-out infinite;
-        }
-        /*
-          cascade 单球轨迹（以左手抛→顶→右手接 为例）:
-          x: 3→11→19 (左到右)
-          y: 21→-12→21 (抛物线顶点-12)
-          scale: 1.15(低)→0.6(顶)→1.15(低) 模拟景深
-          右手接到后瞬间跳回左手继续（通过循环实现）
-        */
+        .jg-body { transform-origin:11px 13px; animation:jg-lean .8s ease-in-out infinite; }
+        .jg-ba { animation:jg-casc 2.4s ease-in-out infinite; animation-delay:0s; }
+        .jg-bb { animation:jg-casc 2.4s ease-in-out infinite; animation-delay:-.8s; }
+        .jg-bc { animation:jg-casc 2.4s ease-in-out infinite; animation-delay:-1.6s; }
+        .jg-shadow { transform-origin:11px 22px; animation:jg-shadow .8s ease-in-out infinite; }
         @keyframes jg-casc {
-          0%   { transform: translate(3px, 21px)  scale(1.15); }
-          12%  { transform: translate(5px, 8px)   scale(0.95); }
-          25%  { transform: translate(8px, -4px)  scale(0.75); }
-          50%  { transform: translate(11px,-12px) scale(0.6); }
-          75%  { transform: translate(15px,-2px)  scale(0.8); }
-          88%  { transform: translate(18px, 12px) scale(1.0); }
-          100% { transform: translate(19px, 21px) scale(1.15); }
+          0%  {transform:translate(3px,18px) scale(1.1)}
+          15% {transform:translate(5px,6px) scale(.9)}
+          30% {transform:translate(8px,-4px) scale(.75)}
+          50% {transform:translate(11px,-10px) scale(.6)}
+          70% {transform:translate(15px,-2px) scale(.8)}
+          85% {transform:translate(18px,10px) scale(1)}
+          100%{transform:translate(19px,18px) scale(1.1)}
         }
-        /* 身体随节奏左右小幅晃动+弹跳 */
-        @keyframes jg-lean {
-          0%   { transform: rotate(-5deg) translateY(0) scaleX(1.02); }
-          50%  { transform: rotate(5deg)  translateY(-1px) scaleX(0.98); }
-          100% { transform: rotate(-5deg) translateY(0) scaleX(1.02); }
-        }
-        /* 左臂：抛出时（0%）高举，接球时（50%）等待 */
-        @keyframes jg-arm-l {
-          0%   { transform: rotate(-55deg) translateY(-1px); }
-          25%  { transform: rotate(-20deg); }
-          50%  { transform: rotate(15deg); }
-          75%  { transform: rotate(-10deg); }
-          100% { transform: rotate(-55deg) translateY(-1px); }
-        }
-        /* 右臂：与左臂错半拍 */
-        @keyframes jg-arm-r {
-          0%   { transform: rotate(15deg); }
-          25%  { transform: rotate(-10deg); }
-          50%  { transform: rotate(-55deg) translateY(-1px); }
-          75%  { transform: rotate(-20deg); }
-          100% { transform: rotate(15deg); }
-        }
-        @keyframes jg-shadow {
-          0%,100%{ transform: scaleX(1.05); opacity:0.3; }
-          50%    { transform: scaleX(0.9); opacity:0.2; }
-        }
+        @keyframes jg-lean { 0%{transform:rotate(-4deg) scaleX(1.02)} 50%{transform:rotate(4deg) translateY(-1px) scaleX(.98)} 100%{transform:rotate(-4deg) scaleX(1.02)} }
+        @keyframes jg-shadow { 0%,100%{transform:scaleX(1);opacity:.3} 50%{transform:scaleX(.9);opacity:.2} }
       </style></defs>
 
-      <ellipse class="jg-shadow" cx="11" cy="25" rx="7" ry="0.75" fill="#c0c0c0"/>
+      <!-- 底座 -->
+      <rect x="7" y="21" width="8" height="1" rx="0.3" fill="#D9D9D9"/>
+      <ellipse class="jg-shadow" cx="11" cy="22" rx="6" ry="0.6" fill="#c0c0c0"/>
 
-      <!-- 球：在身体后面渲染，越小越在后（scale模拟高度） -->
-      <circle class="jg-ba" cx="0" cy="0" r="2.3" fill="#FF6B35"/>
-      <circle class="jg-bb" cx="0" cy="0" r="2.3" fill="#7c91e8"/>
+      <!-- 三彩球（cascade 轨迹，错开 0.8s） -->
+      <!-- 绿球 -->
+      <circle class="jg-ba" cx="0" cy="0" r="1.8" fill="#0FDC00"/>
+      <!-- 黄球 -->
+      <circle class="jg-bb" cx="0" cy="0" r="1.8" fill="#FEBE06"/>
 
       <g class="jg-body">
-        <!-- 左手 -->
-        <g class="jg-arm-l">
-          <rect x="1.5" y="12" width="4" height="4" rx="2" fill="#8891b8" opacity="0.9"/>
-        </g>
-        <!-- 右手 -->
-        <g class="jg-arm-r">
-          <rect x="16.5" y="12" width="4" height="4" rx="2" fill="#8891b8" opacity="0.9"/>
-        </g>
+        <!-- 左手（大，偏下） -->
+        <rect x="2" y="12" width="3" height="3" rx="1.5" fill="#97A0C5" fill-opacity="0.7"/>
         <!-- 身体 -->
-        <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <!-- 帽子 -->
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
-        <!-- 眼睛：弯弯开心眼（^^ 形状） -->
-        <path d="M9 11 Q10 9.2 11 11" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"/>
-        <path d="M11 11 Q12 9.2 13 11" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"/>
-        <!-- 嘴巴：大笑 -->
-        <path d="M8 13.5 Q11 17.5 14 13.5" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+        <rect x="5" y="7" width="12" height="12" rx="6" fill="#97A0C5"/>
+        <!-- 帽子（歪到右上） -->
+        <path d="M15.3438 9.33833L9.28918 7.49817L13.5373 4.40143L15.3438 9.33833Z" fill="#FF5B24" stroke="#FF5B24" stroke-width="0.3"/>
+        <!-- 眼睛（单圆眼） -->
+        <rect x="10" y="11" width="2" height="2" rx="1" fill="black"/>
+        <!-- 弧线笑嘴 -->
+        <path d="M9 14C9.95144 15.4272 12.0486 15.4272 13 14" stroke="black" stroke-linecap="round"/>
+        <!-- 右手（小，右侧） -->
+        <path d="M17.0582 13.0631C17.6426 12.476 18.5924 12.4738 19.1795 13.0582C19.7667 13.6426 19.7689 14.5924 19.1844 15.1795C18.6 15.7667 17.6502 15.7689 17.0631 15.1844C16.476 14.6 16.4738 13.6502 17.0582 13.0631Z" fill="#B6BDD6"/>
       </g>
 
-      <!-- 第三个球最上层（飞得最高时压过身体） -->
-      <circle class="jg-bc" cx="0" cy="0" r="2.3" fill="#4AFF3D"/>
+      <!-- 粉红球（最上层） -->
+      <circle class="jg-bc" cx="0" cy="0" r="1.8" fill="#FE4F4F"/>
     </svg>
     <span>juggling</span>
   </div>
@@ -1111,66 +1056,73 @@
 <div class="row">
 
   <!-- ═══════════════════════════════════════════════
-       DRAGGING — 被拖拽，惊讶表情，身体拉伸，帽子快掉
+       DRAGGING — 被拖拽，>< 箭头眼，帽子歪，身体拉伸
+       完全还原用户设计稿 dragging.svg
   ══════════════════════════════════════════════════ -->
   <div class="item">
     <svg class="pet" viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs><style>
-        .drag-body { transform-origin:11px 12px; animation:drag-stretch .4s ease-in-out infinite alternate; }
-        .drag-hat { transform-origin:11px 4px; animation:drag-hat-wobble .3s ease-in-out infinite alternate; }
-        .drag-arm-l { transform-origin:3.5px 10.5px; animation:drag-arm-l .35s ease-in-out infinite alternate; }
-        .drag-arm-r { transform-origin:18.5px 10.5px; animation:drag-arm-r .35s ease-in-out infinite alternate; }
-        .drag-shadow { transform-origin:11px 22.5px; animation:drag-shadow .4s ease-in-out infinite alternate; }
-        @keyframes drag-stretch { from{transform:translateY(-3px) scaleY(1.15) scaleX(.9)} to{transform:translateY(1px) scaleY(.92) scaleX(1.06)} }
-        @keyframes drag-hat-wobble { from{transform:rotate(-25deg) translateY(-4px)} to{transform:rotate(20deg) translateY(-2px)} }
-        @keyframes drag-arm-l { from{transform:rotate(-60deg)} to{transform:rotate(-30deg)} }
-        @keyframes drag-arm-r { from{transform:rotate(60deg)} to{transform:rotate(30deg)} }
-        @keyframes drag-shadow { from{transform:scaleX(.6);opacity:.15} to{transform:scaleX(1.2);opacity:.35} }
+        .drag-all { transform-origin:11px 13px; animation:drag-stretch .4s ease-in-out infinite alternate; }
+        .drag-hat { transform-origin:12px 5px; animation:drag-hat-wobble .35s ease-in-out infinite alternate; }
+        .drag-shadow { transform-origin:11px 22px; animation:drag-shadow .4s ease-in-out infinite alternate; }
+        @keyframes drag-stretch { from{transform:translateY(-2px) scaleY(1.12) scaleX(.92)} to{transform:translateY(1px) scaleY(.9) scaleX(1.05)} }
+        @keyframes drag-hat-wobble { from{transform:rotate(-18deg) translateY(-2px)} to{transform:rotate(5deg) translateY(0)} }
+        @keyframes drag-shadow { from{transform:scaleX(.5);opacity:.12} to{transform:scaleX(1.15);opacity:.3} }
       </style></defs>
-      <ellipse class="drag-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
-      <g class="drag-body">
-        <g class="drag-arm-l"><rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.8" transform="rotate(45 3.5 10.5)"/></g>
-        <g class="drag-arm-r"><rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.8" transform="rotate(45 18.5 10.5)"/></g>
-        <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
+      <ellipse class="drag-shadow" cx="11" cy="22" rx="5" ry="0.6" fill="#c0c0c0"/>
+      <g class="drag-all">
+        <!-- 左手（小，偏下） -->
+        <rect x="2" y="13" width="3" height="3" rx="1.5" fill="#BECAFF"/>
+        <!-- 身体（稍长） -->
+        <rect x="5" y="7" width="12" height="13" rx="6" fill="#97A0C5"/>
+        <!-- 帽子（歪到右上，快掉的感觉） -->
         <g class="drag-hat">
-          <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+          <path d="M14.5148 7.50564L8.32217 5.85753L12.8458 1.31847L14.5148 7.50564Z" fill="#FF5B24" stroke="#FF5B24" stroke-width="0.3"/>
         </g>
-        <!-- O形惊讶眼 -->
-        <circle cx="11" cy="10.5" r="1.5" fill="white"/>
-        <circle cx="11" cy="10.5" r="0.8" fill="#111827"/>
-        <!-- O形惊讶嘴 -->
-        <ellipse cx="11" cy="15" rx="1.3" ry="1.6" fill="none" stroke="#111827" stroke-width="0.9"/>
+        <!-- >< 箭头眼（折线样式，参照设计稿） -->
+        <!-- > 右箭头 -->
+        <path d="M13.7 13.5L12 12.3L13.7 11" stroke="black" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+        <!-- < 左箭头 -->
+        <path d="M8 11L9.7 12.3L8 13.5" stroke="black" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+        <!-- 右手（大圆，右侧） -->
+        <path d="M16.0582 10.0631C16.6426 9.47597 17.5924 9.47377 18.1795 10.0582C18.7667 10.6426 18.7689 11.5924 18.1844 12.1795C17.6 12.7667 16.6502 12.7689 16.0631 12.1844C15.476 11.6 15.4738 10.6502 16.0582 10.0631Z" fill="#BECAFF"/>
       </g>
     </svg>
     <span>dragging</span>
   </div>
 
   <!-- ═══════════════════════════════════════════════
-       YAWNING — 睡前打哈欠，嘴巴张大，眼睛眯起
+       YAWNING — 打哈欠，眼睛半闭弧线，粉色张嘴，一只手捂嘴，身体后仰
   ══════════════════════════════════════════════════ -->
   <div class="item">
     <svg class="pet" viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs><style>
-        .yawn-body { transform-origin:11px 18px; animation:yawn-lean 3s ease-in-out infinite; }
-        .yawn-mouth { transform-origin:11px 14px; animation:yawn-open 3s ease-in-out infinite; }
-        .yawn-shadow { transform-origin:11px 22.5px; animation:yawn-shadow 3s ease-in-out infinite; }
-        @keyframes yawn-lean { 0%,100%{transform:translateY(0) scaleY(1)} 30%{transform:translateY(1px) scaleY(.96)} 60%{transform:translateY(-1px) scaleY(1.03)} }
-        @keyframes yawn-open { 0%,100%{transform:scaleY(.3)} 25%,75%{transform:scaleY(1)} 50%{transform:scaleY(1.3)} }
-        @keyframes yawn-shadow { 0%,100%{transform:scaleX(1);opacity:.3} 50%{transform:scaleX(1.05);opacity:.35} }
+        .yawn-body { transform-origin:11px 18px; animation:yawn-lean 3.5s ease-in-out infinite; }
+        .yawn-mouth { transform-origin:11px 14.5px; animation:yawn-open 3.5s ease-in-out infinite; }
+        .yawn-hand { transform-origin:16px 14px; animation:yawn-hand 3.5s ease-in-out infinite; }
+        .yawn-shadow { transform-origin:11px 22.5px; animation:yawn-shadow 3.5s ease-in-out infinite; }
+        @keyframes yawn-lean { 0%,100%{transform:translateY(0) rotate(0)} 35%,65%{transform:translateY(-1px) rotate(-4deg)} }
+        @keyframes yawn-open { 0%,15%{transform:scale(.4)} 30%{transform:scale(1.1)} 50%{transform:scale(1.3)} 70%{transform:scale(1)} 85%,100%{transform:scale(.4)} }
+        @keyframes yawn-hand { 0%,15%{transform:rotate(0) translateY(0)} 30%,70%{transform:rotate(-40deg) translateY(-2px)} 85%,100%{transform:rotate(0) translateY(0)} }
+        @keyframes yawn-shadow { 0%,100%{transform:scaleX(1);opacity:.3} 50%{transform:scaleX(1.03);opacity:.35} }
       </style></defs>
       <ellipse class="yawn-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
       <g class="yawn-body">
+        <!-- 左手垂下 -->
         <rect x="2" y="10" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.6" transform="rotate(45 3.5 11.5)"/>
-        <rect x="17" y="10" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.6" transform="rotate(45 18.5 11.5)"/>
+        <!-- 右手捂嘴（动画抬起） -->
+        <g class="yawn-hand">
+          <rect x="16" y="10" width="3.5" height="3.5" rx="1.75" fill="#8891b8" opacity="0.8"/>
+        </g>
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round" transform="rotate(-8 11 5)"/>
-        <!-- 眯眼 -->
-        <line x1="8.5" y1="11" x2="10.5" y2="11" stroke="#111827" stroke-width="1" stroke-linecap="round"/>
-        <line x1="11.5" y1="11" x2="13.5" y2="11" stroke="#111827" stroke-width="1" stroke-linecap="round"/>
-        <!-- 大张嘴 -->
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round" transform="rotate(-6 11 5)"/>
+        <!-- 半闭眼（向下弧线，困的感觉） -->
+        <path d="M8.5 11.5 Q9.5 10.5 10.5 11.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
+        <path d="M11.5 11.5 Q12.5 10.5 13.5 11.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
+        <!-- 粉色张嘴（打哈欠） -->
         <g class="yawn-mouth">
-          <ellipse cx="11" cy="14.5" rx="2" ry="2.5" fill="#7a7f99"/>
-          <ellipse cx="11" cy="14" rx="1.6" ry="1.8" fill="#5c6080"/>
+          <ellipse cx="11" cy="14.5" rx="1.8" ry="2.2" fill="#e8a0a0"/>
+          <ellipse cx="11" cy="14" rx="1.3" ry="1.5" fill="#d07070"/>
         </g>
       </g>
     </svg>

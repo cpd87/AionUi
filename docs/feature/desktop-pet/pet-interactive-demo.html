@@ -43,7 +43,7 @@
   /* 宠物容器 */
   #pet {
     position: fixed;
-    width: 120px; height: 120px;
+    width: 320px; height: 320px;
     cursor: grab;
     z-index: 100;
     transition: transform 0.15s ease-out;
@@ -65,13 +65,13 @@
 <div id="log"></div>
 
 <div id="help">
-  拖拽 → 移动宠物<br>
-  单击 → 开心反应<br>
-  连续点击(3+) → 恼怒抖动<br>
-  20秒不动鼠标 → 打盹<br>
-  60秒不动 → 深度睡眠<br>
-  移动鼠标 → 自动唤醒<br>
-  右侧按钮 → 模拟各状态
+  拖拽 → 移动宠物（>< 挤眼挣扎）<br>
+  单击 → 开心跳跃<br>
+  双击 → 方向偏头（左/右）<br>
+  连续3+ → 恼怒抖动<br>
+  20s不动 → 打哈欠 → 打盹 → 睡觉<br>
+  移动鼠标 → 伸懒腰唤醒<br>
+  右侧按钮 → 模拟 20 种状态
 </div>
 
 <div id="buttons">
@@ -83,6 +83,12 @@
   <button onclick="triggerState('sweeping')">🧹 sweeping</button>
   <button onclick="triggerState('building')">🔧 building</button>
   <button onclick="triggerState('juggling')">🤹 juggling</button>
+  <button onclick="triggerState('attention')">👏 attention</button>
+  <button onclick="triggerState('carrying')">📦 carrying</button>
+  <button onclick="triggerState('yawning')">🥱 yawning</button>
+  <button onclick="triggerState('dozing')">😪 dozing</button>
+  <button onclick="triggerState('random-look')">👀 look</button>
+  <button onclick="triggerState('random-read')">📖 read</button>
 </div>
 
 <div id="pet"></div>
@@ -105,15 +111,15 @@ SVGS.idle = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2
     @keyframes idle-shadow-pulse{0%,100%{transform:scaleX(1);opacity:.35}50%{transform:scaleX(.96);opacity:.28}}
   </style></defs>
   <ellipse class="idle-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
-  <g class="idle-body">
+  <g class="idle-track"><g class="idle-body">
     <rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/>
     <rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/>
     <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
     <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
     <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
-    <g class="idle-eye"><rect x="10" y="10" width="2" height="2" fill="#111827"/></g>
+    <g class="idle-eye"><g class="idle-pupil"><rect x="10" y="10" width="2" height="2" fill="#111827"/></g></g>
     <path d="M8 13.5 Q11 16.5 14 13.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
-  </g>
+  </g></g>
 </svg>`;
 
 SVGS.happy = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -375,49 +381,185 @@ SVGS.building = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.o
 
 SVGS.juggling = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs><style>
-    .jg-body{transform-origin:11px 17px;animation:jg-lean .8s ease-in-out infinite}
-    .jg-arm-l{transform-origin:5px 14px;animation:jg-arm-l .8s ease-in-out infinite}
-    .jg-arm-r{transform-origin:17px 14px;animation:jg-arm-r .8s ease-in-out infinite}
+    .jg-body{transform-origin:11px 13px;animation:jg-lean .8s ease-in-out infinite}
     .jg-ba{animation:jg-casc 2.4s ease-in-out infinite;animation-delay:0s}
     .jg-bb{animation:jg-casc 2.4s ease-in-out infinite;animation-delay:-.8s}
     .jg-bc{animation:jg-casc 2.4s ease-in-out infinite;animation-delay:-1.6s}
-    .jg-shadow{transform-origin:11px 25px;animation:jg-shadow .8s ease-in-out infinite}
-    @keyframes jg-casc{0%{transform:translate(3px,21px) scale(1.15)}25%{transform:translate(8px,-4px) scale(.75)}50%{transform:translate(11px,-12px) scale(.6)}75%{transform:translate(15px,-2px) scale(.8)}100%{transform:translate(19px,21px) scale(1.15)}}
-    @keyframes jg-lean{0%{transform:rotate(-5deg) scaleX(1.02)}50%{transform:rotate(5deg) translateY(-1px) scaleX(.98)}100%{transform:rotate(-5deg) scaleX(1.02)}}
-    @keyframes jg-arm-l{0%{transform:rotate(-55deg) translateY(-1px)}50%{transform:rotate(15deg)}100%{transform:rotate(-55deg) translateY(-1px)}}
-    @keyframes jg-arm-r{0%{transform:rotate(15deg)}50%{transform:rotate(-55deg) translateY(-1px)}100%{transform:rotate(15deg)}}
-    @keyframes jg-shadow{0%,100%{transform:scaleX(1.05);opacity:.3}50%{transform:scaleX(.9);opacity:.2}}
+    .jg-shadow{transform-origin:11px 22px;animation:jg-shadow .8s ease-in-out infinite}
+    @keyframes jg-casc{0%{transform:translate(3px,18px) scale(1.1)}15%{transform:translate(5px,6px) scale(.9)}30%{transform:translate(8px,-4px) scale(.75)}50%{transform:translate(11px,-10px) scale(.6)}70%{transform:translate(15px,-2px) scale(.8)}85%{transform:translate(18px,10px) scale(1)}100%{transform:translate(19px,18px) scale(1.1)}}
+    @keyframes jg-lean{0%{transform:rotate(-4deg) scaleX(1.02)}50%{transform:rotate(4deg) translateY(-1px) scaleX(.98)}100%{transform:rotate(-4deg) scaleX(1.02)}}
+    @keyframes jg-shadow{0%,100%{transform:scaleX(1);opacity:.3}50%{transform:scaleX(.9);opacity:.2}}
   </style></defs>
-  <ellipse class="jg-shadow" cx="11" cy="25" rx="7" ry="0.75" fill="#c0c0c0"/>
-  <circle class="jg-ba" cx="0" cy="0" r="2.3" fill="#FF6B35"/>
-  <circle class="jg-bb" cx="0" cy="0" r="2.3" fill="#7c91e8"/>
+  <rect x="7" y="21" width="8" height="1" rx="0.3" fill="#D9D9D9"/>
+  <ellipse class="jg-shadow" cx="11" cy="22" rx="6" ry="0.6" fill="#c0c0c0"/>
+  <circle class="jg-ba" cx="0" cy="0" r="1.8" fill="#0FDC00"/>
+  <circle class="jg-bb" cx="0" cy="0" r="1.8" fill="#FEBE06"/>
   <g class="jg-body">
-    <g class="jg-arm-l"><rect x="1.5" y="12" width="4" height="4" rx="2" fill="#8891b8" opacity="0.9"/></g>
-    <g class="jg-arm-r"><rect x="16.5" y="12" width="4" height="4" rx="2" fill="#8891b8" opacity="0.9"/></g>
-    <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-    <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
-    <path d="M9 11 Q10 9.2 11 11" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"/>
-    <path d="M11 11 Q12 9.2 13 11" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"/>
-    <path d="M8 13.5 Q11 17.5 14 13.5" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+    <rect x="2" y="12" width="3" height="3" rx="1.5" fill="#97A0C5" fill-opacity="0.7"/>
+    <rect x="5" y="7" width="12" height="12" rx="6" fill="#97A0C5"/>
+    <path d="M15.3438 9.33833L9.28918 7.49817L13.5373 4.40143L15.3438 9.33833Z" fill="#FF5B24" stroke="#FF5B24" stroke-width="0.3"/>
+    <rect x="10" y="11" width="2" height="2" rx="1" fill="black"/>
+    <path d="M9 14C9.95144 15.4272 12.0486 15.4272 13 14" stroke="black" stroke-linecap="round"/>
+    <path d="M17.0582 13.0631C17.6426 12.476 18.5924 12.4738 19.1795 13.0582C19.7667 13.6426 19.7689 14.5924 19.1844 15.1795C18.6 15.7667 17.6502 15.7689 17.0631 15.1844C16.476 14.6 16.4738 13.6502 17.0582 13.0631Z" fill="#B6BDD6"/>
   </g>
-  <circle class="jg-bc" cx="0" cy="0" r="2.3" fill="#4AFF3D"/>
+  <circle class="jg-bc" cx="0" cy="0" r="1.8" fill="#FE4F4F"/>
+</svg>`;
+
+SVGS.dragging = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>
+    .drag-all{transform-origin:11px 13px;animation:drag-stretch .4s ease-in-out infinite alternate}
+    .drag-hat{transform-origin:12px 5px;animation:drag-hat-wobble .35s ease-in-out infinite alternate}
+    .drag-shadow{transform-origin:11px 22px;animation:drag-shadow .4s ease-in-out infinite alternate}
+    @keyframes drag-stretch{from{transform:translateY(-2px) scaleY(1.12) scaleX(.92)}to{transform:translateY(1px) scaleY(.9) scaleX(1.05)}}
+    @keyframes drag-hat-wobble{from{transform:rotate(-18deg) translateY(-2px)}to{transform:rotate(5deg) translateY(0)}}
+    @keyframes drag-shadow{from{transform:scaleX(.5);opacity:.12}to{transform:scaleX(1.15);opacity:.3}}
+  </style></defs>
+  <ellipse class="drag-shadow" cx="11" cy="22" rx="5" ry="0.6" fill="#c0c0c0"/>
+  <g class="drag-all">
+    <rect x="2" y="13" width="3" height="3" rx="1.5" fill="#BECAFF"/>
+    <rect x="5" y="7" width="12" height="13" rx="6" fill="#97A0C5"/>
+    <g class="drag-hat"><path d="M14.5148 7.50564L8.32217 5.85753L12.8458 1.31847L14.5148 7.50564Z" fill="#FF5B24" stroke="#FF5B24" stroke-width="0.3"/></g>
+    <path d="M13.7 13.5L12 12.3L13.7 11" stroke="black" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+    <path d="M8 11L9.7 12.3L8 13.5" stroke="black" stroke-width="0.7" stroke-linecap="round" fill="none"/>
+    <path d="M16.0582 10.0631C16.6426 9.47597 17.5924 9.47377 18.1795 10.0582C18.7667 10.6426 18.7689 11.5924 18.1844 12.1795C17.6 12.7667 16.6502 12.7689 16.0631 12.1844C15.476 11.6 15.4738 10.6502 16.0582 10.0631Z" fill="#BECAFF"/>
+  </g>
+</svg>`;
+
+SVGS.yawning = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>
+    .yawn-body{transform-origin:11px 18px;animation:yawn-lean 3.5s ease-in-out infinite}
+    .yawn-mouth{transform-origin:11px 14.5px;animation:yawn-open 3.5s ease-in-out infinite}
+    .yawn-hand{transform-origin:16px 14px;animation:yawn-hand 3.5s ease-in-out infinite}
+    .yawn-shadow{transform-origin:11px 22.5px;animation:yawn-shadow 3.5s ease-in-out infinite}
+    @keyframes yawn-lean{0%,100%{transform:translateY(0) rotate(0)}35%,65%{transform:translateY(-1px) rotate(-4deg)}}
+    @keyframes yawn-open{0%,15%{transform:scale(.4)}30%{transform:scale(1.1)}50%{transform:scale(1.3)}70%{transform:scale(1)}85%,100%{transform:scale(.4)}}
+    @keyframes yawn-hand{0%,15%{transform:rotate(0) translateY(0)}30%,70%{transform:rotate(-40deg) translateY(-2px)}85%,100%{transform:rotate(0) translateY(0)}}
+    @keyframes yawn-shadow{0%,100%{transform:scaleX(1);opacity:.3}50%{transform:scaleX(1.03);opacity:.35}}
+  </style></defs>
+  <ellipse class="yawn-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
+  <g class="yawn-body">
+    <rect x="2" y="10" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.6" transform="rotate(45 3.5 11.5)"/>
+    <g class="yawn-hand"><rect x="16" y="10" width="3.5" height="3.5" rx="1.75" fill="#8891b8" opacity="0.8"/></g>
+    <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
+    <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round" transform="rotate(-6 11 5)"/>
+    <path d="M8.5 11.5 Q9.5 10.5 10.5 11.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <path d="M11.5 11.5 Q12.5 10.5 13.5 11.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
+    <g class="yawn-mouth"><ellipse cx="11" cy="14.5" rx="1.8" ry="2.2" fill="#e8a0a0"/><ellipse cx="11" cy="14" rx="1.3" ry="1.5" fill="#d07070"/></g>
+  </g>
+</svg>`;
+
+SVGS.dozing = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>
+    .doze-body{transform-origin:11px 18px;animation:doze-nod 2.5s ease-in-out infinite}
+    .doze-shadow{transform-origin:11px 22.5px;animation:doze-shadow 2.5s ease-in-out infinite}
+    .doze-z1{animation:doze-z 3.5s ease-in-out infinite;animation-delay:0s;opacity:0}
+    .doze-z2{animation:doze-z 3.5s ease-in-out infinite;animation-delay:1.2s;opacity:0}
+    @keyframes doze-nod{0%,100%{transform:rotate(0) translateY(0)}40%{transform:rotate(5deg) translateY(2px)}55%{transform:rotate(-3deg) translateY(-1px)}70%{transform:rotate(3deg) translateY(1px)}}
+    @keyframes doze-shadow{0%,100%{transform:scaleX(1);opacity:.3}40%{transform:scaleX(1.05);opacity:.35}}
+    @keyframes doze-z{0%{opacity:0;transform:translate(14px,6px) scale(.4)}20%{opacity:.7}80%{opacity:.3}100%{opacity:0;transform:translate(18px,-2px) scale(.8)}}
+  </style>
+  <g id="doze-pz"><rect x="0" y="0" width="2.5" height="0.6"/><rect x="1.3" y="0.6" width="0.7" height="0.7"/><rect x="0.5" y="1.3" width="0.7" height="0.7"/><rect x="0" y="2" width="2.5" height="0.6"/></g>
+  </defs>
+  <use href="#doze-pz" class="doze-z1" fill="#8891b8"/><use href="#doze-pz" class="doze-z2" fill="#a0a8c8"/>
+  <ellipse class="doze-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
+  <g class="doze-body">
+    <rect x="2" y="10" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.55" transform="rotate(45 3.5 11.5)"/>
+    <rect x="17" y="10" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.55" transform="rotate(45 18.5 11.5)"/>
+    <rect x="5" y="6" width="12" height="12" rx="6" fill="#9098b8"/>
+    <polygon points="11,1 15,7 7,7" fill="#d45a2a" transform="rotate(-10 11 5)"/>
+    <rect x="9" y="10.5" width="4" height="0.8" rx="0.4" fill="#111827"/>
+    <path d="M9.5 13.5 Q11 14.5 12.5 13.5" stroke="#111827" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>`;
+
+SVGS['poke-left'] = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>.poke-l-body{transform-origin:11px 12px;animation:poke-l-tilt .6s cubic-bezier(.34,1.56,.64,1) forwards}@keyframes poke-l-tilt{0%{transform:rotate(0) translateX(0)}40%{transform:rotate(12deg) translateX(2px)}100%{transform:rotate(8deg) translateX(1.5px)}}</style></defs>
+  <ellipse cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0" opacity="0.35"/>
+  <g class="poke-l-body"><rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/><rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/><rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/><polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/><rect x="11.5" y="10" width="2" height="2" fill="#111827"/><path d="M10 14 Q12.5 16 14 14" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/></g>
+</svg>`;
+
+SVGS['poke-right'] = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>.poke-r-body{transform-origin:11px 12px;animation:poke-r-tilt .6s cubic-bezier(.34,1.56,.64,1) forwards}@keyframes poke-r-tilt{0%{transform:rotate(0) translateX(0)}40%{transform:rotate(-12deg) translateX(-2px)}100%{transform:rotate(-8deg) translateX(-1.5px)}}</style></defs>
+  <ellipse cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0" opacity="0.35"/>
+  <g class="poke-r-body"><rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/><rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/><rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/><polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/><rect x="8.5" y="10" width="2" height="2" fill="#111827"/><path d="M8 14 Q9.5 16 12 14" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/></g>
+</svg>`;
+
+SVGS.attention = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>
+    .attn-body{transform-origin:11px 18px;animation:attn-nod 1.5s ease-in-out infinite}
+    .attn-shadow{transform-origin:11px 22.5px;animation:attn-shadow 1.5s ease-in-out infinite}
+    .attn-spark{opacity:0}.attn-sp1{animation:attn-spark-pop 1.5s ease-out infinite;animation-delay:0s}.attn-sp2{animation:attn-spark-pop 1.5s ease-out infinite;animation-delay:.5s}
+    @keyframes attn-nod{0%,100%{transform:translateY(0) scaleY(1)}35%{transform:translateY(-2px) scaleY(1.03)}65%{transform:translateY(0) scaleY(.98)}}
+    @keyframes attn-shadow{0%,100%{transform:scaleX(1);opacity:.35}35%{transform:scaleX(.9);opacity:.25}}
+    @keyframes attn-spark-pop{0%{opacity:0;transform:scale(0)}20%{opacity:1;transform:scale(1.2)}60%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(.5) translateY(-3px)}}
+  </style></defs>
+  <g class="attn-spark attn-sp1" fill="#FFD700"><rect x="18" y="4" width="1.5" height="1.5" rx="0.4"/></g>
+  <g class="attn-spark attn-sp2" fill="#FF9F3F"><rect x="2" y="5" width="1.2" height="1.2" rx="0.3"/></g>
+  <ellipse class="attn-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
+  <g class="attn-body"><rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/><rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/><rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/><polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/><path d="M9.5 11 Q11 9.8 12.5 11" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M9 13.5 Q11 15.5 13 13.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/></g>
+</svg>`;
+
+SVGS.carrying = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>
+    .carry-body{transform-origin:11px 18px;animation:carry-walk .6s ease-in-out infinite}
+    .carry-shadow{transform-origin:11px 22.5px;animation:carry-shadow .6s ease-in-out infinite}
+    .carry-box{transform-origin:11px 16px;animation:carry-box-bob .6s ease-in-out infinite}
+    @keyframes carry-walk{0%,100%{transform:translateX(0) translateY(0) rotate(0)}25%{transform:translateX(1px) translateY(-1.5px) rotate(2deg)}75%{transform:translateX(-1px) translateY(-1.5px) rotate(-2deg)}}
+    @keyframes carry-shadow{0%,100%{transform:scaleX(1);opacity:.3}25%,75%{transform:scaleX(.85);opacity:.2}}
+    @keyframes carry-box-bob{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-.5px) rotate(1deg)}75%{transform:translateY(-.5px) rotate(-1deg)}}
+  </style></defs>
+  <ellipse class="carry-shadow" cx="11" cy="22.5" rx="5" ry="0.6" fill="#c0c0c0"/>
+  <g class="carry-body"><rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/><polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/><rect x="9" y="10.5" width="4" height="1" rx="0.5" fill="#111827"/><path d="M9 14 Q11 12.5 13 14" stroke="#111827" stroke-width="0.9" stroke-linecap="round" fill="none"/><g class="carry-box"><rect x="4" y="12" width="3" height="3" rx="1.5" fill="#8891b8" opacity="0.8"/><rect x="15" y="12" width="3" height="3" rx="1.5" fill="#8891b8" opacity="0.8"/><rect x="6" y="14" width="10" height="7" rx="1" fill="#c8a96e"/><rect x="10" y="14" width="2" height="7" rx="0.3" fill="#e0c070" opacity="0.7"/></g></g>
+</svg>`;
+
+SVGS['random-look'] = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>
+    .look-body{transform-origin:11px 18px;animation:look-sway 4s ease-in-out infinite}
+    .look-eye{animation:look-eye 4s ease-in-out infinite}
+    .look-shadow{transform-origin:11px 22.5px;animation:look-shadow 4s ease-in-out infinite}
+    @keyframes look-sway{0%,100%{transform:rotate(0)}25%{transform:rotate(6deg) translateX(1px)}75%{transform:rotate(-6deg) translateX(-1px)}}
+    @keyframes look-eye{0%,100%{transform:translateX(0)}25%{transform:translateX(2px)}50%{transform:translateX(0)}75%{transform:translateX(-2px)}}
+    @keyframes look-shadow{0%,100%{transform:scaleX(1);opacity:.35}25%{transform:scaleX(.95) translateX(1px);opacity:.3}75%{transform:scaleX(.95) translateX(-1px);opacity:.3}}
+  </style></defs>
+  <ellipse class="look-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
+  <g class="look-body"><rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/><rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/><rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/><polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/><rect x="10" y="2" width="1" height="1" fill="#e8714a"/><g class="look-eye"><rect x="10" y="10" width="2" height="2" fill="#111827"/></g><path d="M8 13.5 Q11 16.5 14 13.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/></g>
+</svg>`;
+
+SVGS['random-read'] = `<svg viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>
+    .read-body{transform-origin:11px 12px;animation:read-tilt 5s ease-in-out infinite}
+    .read-shadow{transform-origin:11px 22.5px;animation:read-shadow 5s ease-in-out infinite}
+    .read-page{animation:read-flip 2.5s ease-in-out infinite}
+    @keyframes read-tilt{0%,100%{transform:rotate(0) translateY(0)}50%{transform:rotate(5deg) translateY(1px)}}
+    @keyframes read-shadow{0%,100%{transform:scaleX(1);opacity:.3}50%{transform:scaleX(1.05);opacity:.35}}
+    @keyframes read-flip{0%,100%{transform:scaleX(1)}50%{transform:scaleX(-1)}}
+  </style></defs>
+  <ellipse class="read-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
+  <g class="read-body"><rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/><polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/><rect x="10" y="11.5" width="2" height="1.5" rx="0.5" fill="#111827"/><path d="M9.5 14.5 Q11 15.5 12.5 14.5" stroke="#111827" stroke-width="0.8" stroke-linecap="round" fill="none"/><rect x="4" y="14" width="3" height="3" rx="1.5" fill="#8891b8" opacity="0.7"/><rect x="15" y="14" width="3" height="3" rx="1.5" fill="#8891b8" opacity="0.7"/><rect x="6" y="16" width="4.5" height="5" rx="0.5" fill="#f0ece0"/><rect x="11.5" y="16" width="4.5" height="5" rx="0.5" fill="#e8e4d8"/><rect x="10.5" y="16" width="1" height="5.5" rx="0.3" fill="#d0c8b0"/><rect x="7" y="17.5" width="3" height="0.5" rx="0.2" fill="#b0a890" opacity="0.7"/><g class="read-page"><rect x="12.5" y="17.5" width="2.5" height="0.5" rx="0.2" fill="#b0a890" opacity="0.7"/></g></g>
 </svg>`;
 
 // ═══════════════════════════════════════════════════════════
 // STATE MACHINE — 优先级 + 最短显示时间 + 自动回 idle
 // ═══════════════════════════════════════════════════════════
 const PRIORITY = {
-  error: 8, notification: 7, sweeping: 6, happy: 5,
-  juggling: 4, building: 4, working: 3, thinking: 2,
-  waking: 2, idle: 1, sleeping: 0,
+  dragging: 10, error: 8, notification: 7, sweeping: 6, happy: 5, attention: 5,
+  carrying: 4, juggling: 4, building: 4, working: 3, thinking: 2,
+  waking: 2, 'poke-left': 2, 'poke-right': 2,
+  'random-look': 1, 'random-read': 1, idle: 1,
+  yawning: 0, dozing: 0, sleeping: 0,
 };
 const MIN_DISPLAY = {
-  happy: 4000, error: 5000, notification: 3000, sweeping: 5500,
-  building: 4000, juggling: 4000, waking: 5000, working: 1000, thinking: 1000,
+  happy: 4000, error: 5000, notification: 3000, sweeping: 5500, attention: 3000,
+  building: 4000, juggling: 4000, carrying: 3000, waking: 1500, working: 1000, thinking: 1000,
+  'poke-left': 2500, 'poke-right': 2500, yawning: 3500,
+  'random-look': 4000, 'random-read': 6000,
 };
 const AUTO_RETURN = {
-  happy: 4000, error: 5000, notification: 3500, sweeping: 5500,
-  building: 5000, juggling: 5000, waking: 5000,
+  happy: 4000, error: 5000, notification: 3500, sweeping: 5500, attention: 3000,
+  building: 5000, juggling: 5000, carrying: 4000, waking: 1500,
+  'poke-left': 2500, 'poke-right': 2500,
+  'random-look': 6000, 'random-read': 8000,
+  yawning: 3500,
 };
 
 let currentState = 'idle';
@@ -462,6 +604,7 @@ function applyState(state) {
 }
 
 function setState(newState) {
+  if (dndMode && newState !== 'idle' && newState !== 'dragging') return;
   const newPri = PRIORITY[newState] ?? 1;
   const curPri = PRIORITY[currentState] ?? 1;
 
@@ -504,8 +647,8 @@ let dragStartX, dragStartY, petStartX, petStartY;
 let didDrag = false;
 
 // 初始位置：右下角
-let petX = window.innerWidth - 160;
-let petY = window.innerHeight - 160;
+let petX = window.innerWidth - 400;
+let petY = window.innerHeight - 400;
 petEl.style.left = petX + 'px';
 petEl.style.top = petY + 'px';
 
@@ -528,7 +671,9 @@ document.addEventListener('pointermove', (e) => {
   if (!isDragging) return;
   const dx = e.clientX - dragStartX;
   const dy = e.clientY - dragStartY;
-  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+    if (!didDrag) { didDrag = true; applyState('dragging'); }
+  }
   petX = petStartX + dx;
   petY = petStartY + dy;
   petEl.style.left = petX + 'px';
@@ -542,6 +687,10 @@ document.addEventListener('pointerup', () => {
   if (!isDragging) return;
   isDragging = false;
   petEl.classList.remove('dragging');
+  if (didDrag && currentState === 'dragging') {
+    log('📍 dropped');
+    applyState('idle');
+  }
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -552,18 +701,26 @@ let clickTimer = null;
 const CLICK_WINDOW = 500;
 
 petEl.addEventListener('click', (e) => {
-  if (didDrag) return; // 拖拽不算点击
+  if (didDrag) return;
 
   clickCount++;
   if (clickTimer) clearTimeout(clickTimer);
+
+  // 记录点击在宠物左半还是右半
+  const rect = petEl.getBoundingClientRect();
+  const clickSide = (e.clientX - rect.left) < rect.width / 2 ? 'left' : 'right';
 
   clickTimer = setTimeout(() => {
     if (clickCount >= 3) {
       log('🤯 annoyed! (multi-click)');
       setState('error');
+    } else if (clickCount === 2) {
+      const pokeState = clickSide === 'left' ? 'poke-left' : 'poke-right';
+      log(`👉 poked ${clickSide}! (double-click)`);
+      setState(pokeState);
     } else {
-      log('😊 poked! (click)');
-      setState('happy');
+      log('👏 poked! (click)');
+      setState('attention');
     }
     clickCount = 0;
     clickTimer = null;
@@ -571,44 +728,228 @@ petEl.addEventListener('click', (e) => {
 });
 
 // ═══════════════════════════════════════════════════════════
-// SLEEP — 鼠标不动自动睡觉 + 移动唤醒
+// RIGHT-CLICK MENU — 右键菜单
+// ═══════════════════════════════════════════════════════════
+const menuEl = document.createElement('div');
+menuEl.id = 'ctx-menu';
+menuEl.style.cssText = 'position:fixed;z-index:200;background:#252738;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:4px 0;min-width:160px;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.4);font-size:12px;letter-spacing:0.5px;';
+menuEl.innerHTML = `
+  <div class="ctx-item" onclick="setPetSize(240)">🔹 小 (240px)</div>
+  <div class="ctx-item" onclick="setPetSize(320)">🔸 中 (320px)</div>
+  <div class="ctx-item" onclick="setPetSize(440)">🔶 大 (440px)</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="petPat()">🤗 摸一摸</div>
+  <div class="ctx-item" onclick="triggerState('idle')">💤 重置状态</div>
+  <div class="ctx-item" onclick="toggleDND()">🔕 勿扰模式</div>
+  <div class="ctx-item" onclick="petEl.style.display='none';menuEl.style.display='none';log('👋 隐藏宠物 (刷新恢复)')">👋 隐藏宠物</div>
+`;
+document.body.appendChild(menuEl);
+
+// Menu styles
+const menuStyle = document.createElement('style');
+menuStyle.textContent = `.ctx-item{padding:6px 14px;cursor:pointer;color:#fff;transition:background .1s}.ctx-item:hover{background:rgba(255,255,255,0.1)}.ctx-sep{height:1px;background:rgba(255,255,255,0.08);margin:3px 0}`;
+document.head.appendChild(menuStyle);
+
+function petPat() {
+  menuEl.style.display = 'none';
+  log('🤗 被摸了！开心~');
+  setState('attention');
+  // 小弹跳
+  petEl.style.transition = 'transform 0.15s ease-out';
+  petEl.style.transform = 'scale(1.08)';
+  setTimeout(() => { petEl.style.transform = 'scale(1)'; }, 150);
+  setTimeout(() => { petEl.style.transition = ''; }, 300);
+  // 飘出小爱心
+  spawnHearts();
+}
+
+// 像素风爱心 SVG（3x3 方块拼）
+const PIXEL_HEART_COLORS = ['#FF6B6B', '#FF8E8E', '#FFB3B3', '#FF5252', '#E84393', '#FD79A8'];
+function makePixelHeart(size, color) {
+  // 5x5 pixel heart pattern
+  return `<svg width="${size}" height="${size}" viewBox="0 0 5 5" fill="none" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated">
+    <rect x="0" y="1" width="1" height="1" fill="${color}"/>
+    <rect x="4" y="1" width="1" height="1" fill="${color}"/>
+    <rect x="0" y="2" width="1" height="1" fill="${color}"/>
+    <rect x="4" y="2" width="1" height="1" fill="${color}"/>
+    <rect x="1" y="0" width="1" height="1" fill="${color}"/>
+    <rect x="3" y="0" width="1" height="1" fill="${color}"/>
+    <rect x="1" y="1" width="1" height="1" fill="${color}"/>
+    <rect x="2" y="1" width="1" height="1" fill="${color}"/>
+    <rect x="3" y="1" width="1" height="1" fill="${color}"/>
+    <rect x="1" y="2" width="1" height="1" fill="${color}"/>
+    <rect x="2" y="2" width="1" height="1" fill="${color}"/>
+    <rect x="3" y="2" width="1" height="1" fill="${color}"/>
+    <rect x="2" y="0" width="1" height="1" fill="${color}"/>
+    <rect x="1" y="3" width="1" height="1" fill="${color}"/>
+    <rect x="2" y="3" width="1" height="1" fill="${color}"/>
+    <rect x="3" y="3" width="1" height="1" fill="${color}"/>
+    <rect x="2" y="4" width="1" height="1" fill="${color}"/>
+  </svg>`;
+}
+
+function spawnHearts() {
+  const r = petEl.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height * 0.3;
+  for (let i = 0; i < 7; i++) {
+    const heart = document.createElement('div');
+    const size = 12 + Math.random() * 14;
+    const color = PIXEL_HEART_COLORS[Math.floor(Math.random() * PIXEL_HEART_COLORS.length)];
+    heart.innerHTML = makePixelHeart(size, color);
+    heart.style.cssText = `position:fixed;z-index:200;pointer-events:none;
+      left:${cx + (Math.random()-0.5)*80}px;top:${cy + (Math.random()-0.5)*20}px;opacity:1;
+      transition:all ${1.2 + Math.random()*0.8}s cubic-bezier(0.25,0.46,0.45,0.94);`;
+    document.body.appendChild(heart);
+    requestAnimationFrame(() => {
+      heart.style.transform = `translateY(${-50 - Math.random()*70}px) translateX(${(Math.random()-0.5)*40}px) rotate(${(Math.random()-0.5)*25}deg)`;
+      heart.style.opacity = '0';
+    });
+    setTimeout(() => heart.remove(), 2200);
+  }
+}
+
+let dndMode = false;
+function toggleDND() {
+  dndMode = !dndMode;
+  log(dndMode ? '🔕 勿扰模式 ON' : '🔔 勿扰模式 OFF');
+  menuEl.style.display = 'none';
+}
+
+function setPetSize(size) {
+  petEl.style.width = size + 'px';
+  petEl.style.height = size + 'px';
+  log(`📐 size → ${size}px`);
+  menuEl.style.display = 'none';
+}
+
+petEl.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  menuEl.style.left = e.clientX + 'px';
+  menuEl.style.top = e.clientY + 'px';
+  menuEl.style.display = 'block';
+});
+document.addEventListener('click', () => { menuEl.style.display = 'none'; });
+
+// ═══════════════════════════════════════════════════════════
+// SLEEP — 对齐 clawd 时间线
+//   20s idle → 随机 idle 动画 (random-look/random-read)
+//   60s idle → yawning(3s) → dozing
+//   10min idle → sleeping (深度睡眠)
+//   鼠标移动 → waking(1.5s) → idle
 // ═══════════════════════════════════════════════════════════
 let lastMouseMove = Date.now();
-const DOZE_TIMEOUT = 20000;    // 20s → sleeping
-const DEEP_SLEEP_TIMEOUT = 60000; // 60s → deep sleep (same anim, log different)
-let sleepPhase = 'awake'; // awake | dozing | deep
+const RANDOM_IDLE_TIMEOUT = 20000;   // 20s → 随机 idle 动画
+const YAWN_TIMEOUT = 60000;          // 60s → 打哈欠
+const DEEP_SLEEP_TIMEOUT = 600000;   // 10min → 深度睡眠
+let sleepPhase = 'awake'; // awake | random-idle | yawning | dozing | deep
+let randomIdlePlayed = false;
 
 setInterval(() => {
   const idle = Date.now() - lastMouseMove;
   const isInteractive = ['working', 'thinking', 'error', 'notification', 'happy',
-                          'sweeping', 'building', 'juggling', 'waking'].includes(currentState);
+                          'sweeping', 'building', 'juggling', 'waking', 'attention',
+                          'carrying', 'dragging'].includes(currentState);
 
   if (isInteractive) {
     sleepPhase = 'awake';
+    randomIdlePlayed = false;
     return;
   }
 
-  if (sleepPhase === 'awake' && idle >= DOZE_TIMEOUT) {
-    sleepPhase = 'dozing';
-    log('💤 dozing off (20s idle)');
-    setState('sleeping');
+  // 20s → 随机 idle 动画
+  if (sleepPhase === 'awake' && idle >= RANDOM_IDLE_TIMEOUT && !randomIdlePlayed) {
+    randomIdlePlayed = true;
+    const pick = Math.random() < 0.5 ? 'random-look' : 'random-read';
+    log(`👀 random idle → ${pick} (20s idle)`);
+    applyState(pick);
   }
 
+  // 60s → 打哈欠
+  if (sleepPhase === 'awake' && idle >= YAWN_TIMEOUT) {
+    sleepPhase = 'yawning';
+    log('🥱 yawning (60s idle)');
+    applyState('yawning');
+    setTimeout(() => {
+      if (sleepPhase === 'yawning') {
+        sleepPhase = 'dozing';
+        log('😪 dozing off');
+        applyState('dozing');
+      }
+    }, 3000);
+  }
+
+  // 10min → 深度睡眠
   if (sleepPhase === 'dozing' && idle >= DEEP_SLEEP_TIMEOUT) {
     sleepPhase = 'deep';
-    log('😴 deep sleep (60s idle)');
+    log('😴 deep sleep (10min idle)');
+    applyState('sleeping');
   }
 }, 1000);
 
 // 鼠标移动唤醒
 document.addEventListener('mousemove', () => {
-  if (sleepPhase !== 'awake' && currentState === 'sleeping') {
+  if (sleepPhase !== 'awake' &&
+      ['sleeping', 'dozing', 'yawning'].includes(currentState)) {
     sleepPhase = 'awake';
+    randomIdlePlayed = false;
     log('☀️ waking up!');
     setState('waking');
   }
   lastMouseMove = Date.now();
 });
+
+// ═══════════════════════════════════════════════════════════
+// EYE TRACKING — idle 时眼球跟随鼠标
+// 眼球偏移最大 3px，身体微倾 33%，0.5px 取整防抖
+// ═══════════════════════════════════════════════════════════
+let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+let lastEyeDx = 0, lastEyeDy = 0;
+function updateEyeTracking() {
+  requestAnimationFrame(updateEyeTracking);
+  if (currentState !== 'idle') {
+    lastEyeDx = 0; lastEyeDy = 0;
+    return;
+  }
+
+  const pupil = petEl.querySelector('.idle-pupil');
+  const track = petEl.querySelector('.idle-track');
+  if (!pupil || !track) return;
+
+  const r = petEl.getBoundingClientRect();
+  const centerX = r.left + r.width * 0.5;
+  const centerY = r.top + r.height * 0.4;
+
+  const relX = mouseX - centerX;
+  const relY = mouseY - centerY;
+  const dist = Math.sqrt(relX * relX + relY * relY);
+
+  const MAX_X = 3, MAX_UP = 3, MAX_DOWN = 1, RANGE = 300;
+  let dx = 0, dy = 0;
+  if (dist > 1) {
+    const s = Math.min(1, dist / RANGE);
+    dx = Math.round((relX / dist) * MAX_X * s * 2) / 2;
+    const rawDy = (relY / dist) * MAX_UP * s;
+    dy = Math.round(Math.min(MAX_DOWN, Math.max(-MAX_UP, rawDy)) * 2) / 2;
+  }
+
+  if (dx !== lastEyeDx || dy !== lastEyeDy) {
+    // 眼珠偏移
+    pupil.setAttribute('transform', `translate(${dx} ${dy})`);
+    // 整个身体（含嘴巴）跟着微倾：位移 33% + 微转头
+    const bdx = dx * 0.35;
+    const bdy = dy * 0.2;
+    const rot = dx * 0.6;
+    track.setAttribute('transform', `translate(${bdx} ${bdy}) rotate(${rot} 11 12)`);
+    lastEyeDx = dx; lastEyeDy = dy;
+  }
+}
+updateEyeTracking();
 
 // ═══════════════════════════════════════════════════════════
 // INIT
