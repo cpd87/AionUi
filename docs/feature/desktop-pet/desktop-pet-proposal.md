@@ -361,3 +361,212 @@ error(8) > notification(7) > sweeping(6) > happy(5)
 3. **CSS 动画 vs JS 动画**：SVG 内的 CSS `@keyframes` 在透明窗口中正常工作，无需改用 JS
 4. **穿透点击**：透明区域自动穿透（Electron transparent window 默认行为），只有 SVG 内容区域响应鼠标
 5. **多显示器**：拖拽支持跨显示器，位置记忆包含显示器标识
+
+---
+
+## 8. 难度评估 & AionUi 架构对接分析
+
+### 8.1 实现难度：中等
+
+| 维度 | 评估 | 说明 |
+|------|------|------|
+| **窗口层** | ⭐⭐ 简单 | Electron 创建透明窗口是成熟 API，clawd 已验证方案可行 |
+| **AI 事件联动** | ⭐ 非常简单 | **AionUi 比 clawd 简单得多** — clawd 作为外部应用需要 hook 注入 + HTTP 轮询，我们的 AI 事件全在自己代码里，直接 IPC emit 即可 |
+| **交互系统** | ⭐⭐ 简单 | 拖拽/点击/睡眠都是标准 DOM 事件，已在 interactive-demo 中验证 |
+| **平台适配** | ⭐⭐⭐ 中等 | macOS/Windows/Linux 窗口层级行为不同，需要各平台 workaround（clawd 源码可直接参考） |
+| **动画资产** | ⭐⭐ 简单 | 11 个状态 SVG 已完成，新增 5 个工作量不大 |
+| **状态机** | ⭐⭐ 简单 | 优先级队列 + 最短显示时间已在 demo 中实现 |
+
+**总体评估：5-8 天工作量**（一个熟悉 Electron 的开发者）
+
+### 8.2 AionUi vs clawd：架构差异与我们的优势
+
+clawd 是**外部观察者**，需要用各种 hack 来"偷看"AI 工具内部状态。AionUi 是 **AI 平台本身**，所有事件都是我们自己的。
+
+```
+clawd 的事件获取路径（复杂、脆弱）：
+  Claude Code → settings.json hook 注入 → 子进程执行 hook 脚本
+    → 解析进程树拿 PID → HTTP POST 到 127.0.0.1:23333 → 宠物状态
+
+AionUi 的事件获取路径（简单、可靠）：
+  SendBox 收到 message → ipcBridge.pet.setState('thinking')
+    → 主进程转发 → 宠物窗口更新
+```
+
+| 对比项 | clawd | AionUi |
+|--------|-------|--------|
+| 事件检测 | Hook 注入 + JSONL 轮询 + HTTP 服务（3 套机制） | 直接在 SendBox 里 emit（1 行代码） |
+| 支持的 AI 工具 | Claude Code / Codex CLI / Gemini CLI（仅 CLI） | OpenClaw / Codex / Gemini / Nanobot / ACP / Remote（全平台） |
+| 网页端 AI | ❌ 不支持 ChatGPT/Gemini 网页版 | ✅ Gemini 网页也在我们平台内 |
+| 事件粒度 | 15 个事件类型（受限于 hook 能暴露的） | 无限制，message.type 任意扩展 |
+| 可靠性 | hook 可能被覆盖（需 watchdog）、HTTP 可能端口冲突 | IPC 是 Electron 原生通道，100% 可靠 |
+| 延迟 | hook 子进程启动 + HTTP 请求 ≈ 50-200ms | IPC 直连 ≈ <1ms |
+
+**结论：AI 事件联动是我们最大的优势，clawd 最复杂的部分（hooks/server/monitor）我们完全不需要。**
+
+### 8.3 现有 AionUi 架构如何对接
+
+#### 主进程层（src/process/）
+
+AionUi 主进程已有清晰的模块分层：
+
+```
+src/process/
+├── bridge/          ← 已有 IPC 桥接层，新增 petBridge.ts 即可
+├── channels/        ← 消息通道，宠物不需要用
+├── agent/           ← AI 代理管理
+├── services/        ← 服务层
+├── task/            ← 任务管理
+└── pet/             ← 【新增】宠物窗口管理
+    ├── PetWindowManager.ts
+    ├── PetStateRouter.ts
+    └── PetIdleDetector.ts
+```
+
+**对接点 1 — IPC Bridge**
+
+在 `src/common/adapter/ipcBridge.ts` 中已有 `conversation.*` 系列方法，新增 `pet.*` 系列：
+
+```typescript
+// 新增到 ipcBridge
+pet: {
+  setState: createInvoke<PetState>('pet:setState'),
+  getPrefs: createInvoke<PetPrefs>('pet:getPrefs'),
+  setPrefs: createInvoke<void>('pet:setPrefs'),
+  toggle: createInvoke<void>('pet:toggle'),
+}
+```
+
+**对接点 2 — 窗口管理**
+
+`src/index.ts` 中创建主窗口的位置（`new BrowserWindow`），在同一层级初始化宠物窗口：
+
+```typescript
+// src/index.ts 修改
+import { PetWindowManager } from './process/pet/PetWindowManager';
+
+app.whenReady().then(() => {
+  createMainWindow();
+  PetWindowManager.init();  // 主窗口之后创建宠物窗口
+});
+```
+
+**对接点 3 — 事件上报**
+
+各 SendBox 已有 `emitter.emit('pet.state', ...)` → 改为 `ipcBridge.pet.setState.invoke(...)`。已改的 5 个文件只需替换一行。
+
+补充更细粒度的事件：在各 SendBox 的 `message handler switch` 中，根据 message.type 映射：
+
+```typescript
+// 现有的 switch 分支，只需在每个 case 后加一行：
+
+case 'thought':
+  ipcBridge.pet.setState.invoke('thinking');  // ← 加这一行
+  // ...existing thought handling...
+  break;
+
+case 'finish':
+  ipcBridge.pet.setState.invoke('happy');     // ← 加这一行
+  // ...existing finish handling...
+  break;
+```
+
+**对接点 4 — 设置集成**
+
+AionUi 已有 `ConfigStorage` 系统（`src/common/config/storage.ts`），宠物设置直接复用：
+
+```typescript
+// 加到 ConfigStorage
+'pet.enabled': boolean,
+'pet.size': 'small' | 'medium' | 'large',
+'pet.position': { x: number, y: number },
+'pet.dnd': boolean,
+```
+
+### 8.4 需要注意的坑（来自 clawd 踩过的）
+
+| 坑 | clawd 的解法 | 我们的对策 |
+|----|-------------|-----------|
+| **macOS 全屏模式下宠物消失** | `setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })` + NSWindowCollectionBehavior 重设 | 直接照搬，加 `reapplyMacVisibility()` |
+| **Windows 窗口层级被重置** | 5 秒 watchdog 定时 `setAlwaysOnTop(true, 'pop-up-menu')` | 照搬 watchdog 机制 |
+| **Linux skipTaskbar 不生效** | 每次 `showInactive()` 后重新 `setSkipTaskbar(true)` | 照搬 |
+| **透明窗口穿透问题** | 双窗口架构（render + hit），hit 窗口专门处理输入 | **我们用单窗口即可** — clawd 的双窗口是因为要在 Linux 上兼容 WM，AionUi 用户群偏 macOS/Windows，单窗口方案更简单 |
+| **拖拽时 pointermove 丢失** | `setPointerCapture()` + 在 document 上监听 | 标准方案，照搬 |
+| **窗口焦点抢占** | `focusable: false` + `setFocusable(false)` | 照搬 |
+
+---
+
+## 9. 优化建议
+
+### 9.1 比 clawd 做得更好的方向
+
+**① 更丰富的 AI 事件映射**
+
+clawd 受限于 hook 机制，只能拿到 15 个粗粒度事件。我们可以做到：
+
+```
+- token 级别的流式反馈（content chunk 到达时宠物打字加速）
+- 多轮对话感知（第 1 轮 vs 第 10 轮显示不同疲惫程度）
+- 模型切换感知（切换到 GPT-4 时宠物换表情）
+- 工具调用类型感知（文件读取 vs 代码执行显示不同动画）
+- 错误类型感知（网络错误 vs 余额不足 vs 模型拒绝 显示不同反应）
+```
+
+**② 平台个性化**
+
+不同 AI 平台可以有轻微差异的行为：
+
+```
+- OpenClaw 平台：宠物帽子变成 Claude 标志色
+- Gemini 平台：宠物帽子变成蓝色
+- Codex 平台：宠物旁边出现终端图标
+```
+
+**③ 用户自定义**
+
+clawd 没有自定义选项，我们可以加：
+
+```
+- 自定义宠物大小（滑块）
+- 自定义透明度
+- 自选帽子颜色
+- 导入自定义 SVG（高级用户）
+- 动画速度调节
+```
+
+**④ 与 AionUi 设置面板深度集成**
+
+在 AionUi 的设置页面加一个「桌面宠物」tab：
+
+```
+设置 > 显示 > 桌面宠物
+├── 开关：启用/禁用
+├── 大小：小/中/大
+├── 勿扰模式：开/关
+├── AI 联动：开/关（关闭后只做 idle/sleep）
+├── 透明度：滑块 30%-100%
+└── 重置位置：按钮
+```
+
+**⑤ 数据统计（彩蛋）**
+
+记录宠物的生活数据，在右键菜单展示：
+
+```
+🐾 AionUi Pet 今日状态
+  工作了 3 小时 42 分钟
+  思考了 156 次
+  开心了 23 次
+  睡了 2 次
+  被你戳了 7 次
+```
+
+### 9.2 建议不做的（避免过度工程）
+
+| 不建议 | 原因 |
+|--------|------|
+| 迷你模式（贴边缩小） | 开发量大，用户不一定需要，可后续加 |
+| 抛物线跳跃物理 | 纯锦上添花，优先级低 |
+| 多宠物系统 | 复杂度高，MVP 不需要 |
+| 语音交互 | 脱离核心场景 |
+| 自定义动画编辑器 | 工程量极大，不值得 |
