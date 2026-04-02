@@ -10,7 +10,11 @@ import { useAddEventListener } from '@renderer/utils/emitter';
 export type PetState =
   | 'idle' | 'thinking' | 'working' | 'happy' | 'sleeping'
   | 'error' | 'notification' | 'waking'
-  | 'sweeping' | 'building' | 'juggling';
+  | 'sweeping' | 'building' | 'juggling'
+  | 'dragging' | 'yawning' | 'dozing'
+  | 'poke-left' | 'poke-right'
+  | 'attention' | 'carrying'
+  | 'random-look' | 'random-read';
 
 /**
  * Manages the pet's current animation state.

@@ -20,6 +20,15 @@ import {
   SweepingPet,
   BuildingPet,
   JugglingPet,
+  DraggingPet,
+  YawningPet,
+  DozingPet,
+  PokeLeftPet,
+  PokeRightPet,
+  AttentionPet,
+  CarryingPet,
+  RandomLookPet,
+  RandomReadPet,
 } from './states';
 
 const STATE_COMPONENTS: Record<PetState, React.FC> = {
@@ -34,6 +43,15 @@ const STATE_COMPONENTS: Record<PetState, React.FC> = {
   sweeping: SweepingPet,
   building: BuildingPet,
   juggling: JugglingPet,
+  dragging: DraggingPet,
+  yawning: YawningPet,
+  dozing: DozingPet,
+  'poke-left': PokeLeftPet,
+  'poke-right': PokeRightPet,
+  attention: AttentionPet,
+  carrying: CarryingPet,
+  'random-look': RandomLookPet,
+  'random-read': RandomReadPet,
 };
 
 const PET_SIZE = 80;
