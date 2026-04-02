@@ -20,7 +20,7 @@
   .row { display: flex; gap: 56px; align-items: flex-end; flex-wrap: wrap; justify-content: center; }
   .item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .item span { font-size: 11px; opacity: 0.4; letter-spacing: 2px; text-transform: uppercase; }
-  .pet { width: 200px; height: 200px; transition: width 0.1s, height 0.1s; }
+  .pet { width: 200px; height: 200px; transition: width 0.1s, height 0.1s; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15)); }
 </style>
 </head>
 <body>
@@ -86,7 +86,7 @@
         <!-- body -->
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
         <!-- hat -->
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <!-- hat highlight -->
         <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
         <!-- eye -->
@@ -158,7 +158,7 @@
         <!-- 右手：设计稿原始 rect -->
         <rect width="3" height="3" rx="1.5" transform="matrix(4.37114e-08 1 1 -4.37114e-08 18 19)" fill="#B6BDD6"/>
         <!-- 帽子：设计稿原始三角 -->
-        <path d="M13.0713 11.6884L18.9585 14.2193L18.2068 7.85522L13.0713 11.6884Z" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.4" stroke-linejoin="round"/>
+        <path d="M13.0713 11.6884L18.9585 14.2193L18.2068 7.85522L13.0713 11.6884Z" fill="#FF6B35"/>
         <!-- 白色眼睛块 -->
         <rect x="8" y="8" width="2" height="3" fill="white"/>
         <!-- 嘟嘴圆点 -->
@@ -255,7 +255,7 @@
         <rect x="8" y="7" width="12" height="12" rx="6" fill="#97A0C5"/>
         <!-- 帽子（随打字抖动） -->
         <g class="wk-hat">
-          <path d="M16.4681 2.77162L18.7097 9.32717L11.9116 7.99068L16.4681 2.77162Z" fill="#FF6B35" stroke="rgba(255,255,255,0.35)" stroke-width="0.4"/>
+          <path d="M16.4681 2.77162L18.7097 9.32717L11.9116 7.99068L16.4681 2.77162Z" fill="#FF6B35"/>
         </g>
         <!-- 眼睛 -->
         <rect x="12" y="11" width="2" height="2" rx="1" fill="#111827"/>
@@ -373,7 +373,7 @@
           <rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.8" transform="rotate(45 18.5 10.5)"/>
         </g>
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
         <!-- ^^ arc eyes -->
         <path d="M9 10.5 Q10 9.2 11 10.5" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"/>
@@ -389,48 +389,40 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════
-       SLEEPING — deep breathe + tilted hat + zzz float
+       SLEEPING — 还原用户设计稿：压扁趴地+zzz飘浮+呼吸
   ══════════════════════════════════════════════════ -->
   <div class="item">
     <svg class="pet" viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <style>
           .sleep-body {
-            transform-origin: 11px 18px;
-            animation: sleep-breathe 4.5s ease-in-out infinite;
-          }
-          .sleep-shadow {
-            transform-origin: 11px 22.5px;
-            animation: sleep-shadow 4.5s ease-in-out infinite;
+            transform-origin: 11px 15px;
+            animation: sleep-breathe 4s ease-in-out infinite;
           }
           .sleep-z1 { animation: sleep-zzz1 5s ease-in-out infinite; animation-delay: 0s; opacity: 0; }
           .sleep-z2 { animation: sleep-zzz2 5s ease-in-out infinite; animation-delay: 1.6s; opacity: 0; }
           .sleep-z3 { animation: sleep-zzz3 5s ease-in-out infinite; animation-delay: 3.2s; opacity: 0; }
           @keyframes sleep-breathe {
-            0%,100% { transform: scaleY(1); }
-            35%,45% { transform: scaleY(1.04); }
-          }
-          @keyframes sleep-shadow {
-            0%,100% { transform: scaleX(1); opacity: 0.28; }
-            35%,45% { transform: scaleX(1.04); opacity: 0.35; }
+            0%,100% { transform: scaleY(1) scaleX(1); }
+            40%,60% { transform: scaleY(1.14) scaleX(0.94); }
           }
           @keyframes sleep-zzz1 {
-            0%   { opacity:0; transform: translate(12px,6px) scale(0.55); }
+            0%   { opacity:0; transform: translate(14px,4px) scale(0.5); }
             15%  { opacity:0.9; }
             80%  { opacity:0.5; }
-            100% { opacity:0; transform: translate(17px,-1px) scale(0.95); }
+            100% { opacity:0; transform: translate(18px,-4px) scale(0.9); }
           }
           @keyframes sleep-zzz2 {
-            0%   { opacity:0; transform: translate(14px,4px) scale(0.45); }
+            0%   { opacity:0; transform: translate(16px,2px) scale(0.4); }
             15%  { opacity:0.85; }
             80%  { opacity:0.45; }
-            100% { opacity:0; transform: translate(20px,-2px) scale(0.85); }
+            100% { opacity:0; transform: translate(21px,-6px) scale(0.8); }
           }
           @keyframes sleep-zzz3 {
-            0%   { opacity:0; transform: translate(10px,8px) scale(0.38); }
+            0%   { opacity:0; transform: translate(12px,6px) scale(0.35); }
             15%  { opacity:0.8; }
             80%  { opacity:0.4; }
-            100% { opacity:0; transform: translate(15px,2px) scale(0.75); }
+            100% { opacity:0; transform: translate(16px,-2px) scale(0.7); }
           }
         </style>
         <!-- pixel Z shape -->
@@ -445,21 +437,22 @@
       <use href="#sleep-pz" class="sleep-z1" fill="#8891b8"/>
       <use href="#sleep-pz" class="sleep-z2" fill="#a0a8c8"/>
       <use href="#sleep-pz" class="sleep-z3" fill="#c0c8e0"/>
-      <ellipse class="sleep-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
+
       <g class="sleep-body">
-        <!-- arms drooped lower -->
-        <rect x="2" y="11" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.5" transform="rotate(45 3.5 12.5)"/>
-        <rect x="17" y="11" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.5" transform="rotate(45 18.5 12.5)"/>
-        <!-- body slightly darker -->
-        <rect x="5" y="6" width="12" height="12" rx="6" fill="#8890b5"/>
-        <!-- hat tilted with darker color -->
-        <polygon points="11,1 15,7 7,7" fill="#b84020" transform="rotate(-15 11 5)"/>
-        <rect x="10" y="2" width="1" height="1" fill="#c05535" transform="rotate(-15 11 5)"/>
-        <!-- closed eyes — two horizontal dashes -->
-        <line x1="9" y1="11" x2="11" y2="11" stroke="#111827" stroke-width="0.9" stroke-linecap="round"/>
-        <line x1="11" y1="11" x2="13" y2="11" stroke="#111827" stroke-width="0.9" stroke-linecap="round"/>
-        <!-- peaceful small smile -->
-        <path d="M9 13.5 Q11 15 13 13.5" stroke="#111827" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+        <!-- 左手（大灰色，偏下） -->
+        <rect x="2" y="14" width="3" height="3" rx="1.5" fill="#97A0C5" fill-opacity="0.7"/>
+        <!-- 压扁的身体（宽扁椭圆） -->
+        <rect x="3" y="7" width="16" height="10" rx="5" fill="#97A0C5"/>
+        <!-- 帽子（正三角，不歪） -->
+        <path d="M14.2041 6.84961L7.7959 6.84961L11 1.2998L14.2041 6.84961Z" fill="#FF5B24" stroke="#FF5B24" stroke-width="0.3"/>
+        <!-- 底座 -->
+        <rect x="2" y="17" width="18" height="1" rx="0.3" fill="#D9D9D9"/>
+        <!-- 右手（浅色，偏右下） -->
+        <path d="M16.3402 14.3464C17.0804 13.6028 18.2833 13.6 19.0269 14.3402C19.7705 15.0804 19.7733 16.2833 19.0331 17.0269C18.2929 17.7705 17.0901 17.7733 16.3464 17.0331C15.6028 16.2929 15.6 15.0901 16.3402 14.3464Z" fill="#B9C3EB"/>
+        <!-- 闭眼横线 -->
+        <path d="M8 11H11" stroke="black" stroke-linecap="round"/>
+        <!-- 安详微笑 -->
+        <path d="M7 13C8.85289 15.1176 12.1471 15.1176 14 13" stroke="black" stroke-linecap="round"/>
       </g>
     </svg>
     <span>sleeping</span>
@@ -523,7 +516,7 @@
       <ellipse class="err-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
       <!-- hat flying separately above body -->
       <g class="err-hat">
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
       </g>
       <g class="err-body">
@@ -645,7 +638,7 @@
           <rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.8" transform="rotate(45 18.5 10.5)"/>
         </g>
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
         <g class="notif-eye">
           <rect x="10" y="10" width="2" height="2" fill="#111827"/>
@@ -657,156 +650,134 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════
-       WAKING — 睡扁 → 缓慢伸懒腰拉高 → 双手上举 → 落回
+       WAKING — sleeping 趴地造型 → 淡入切换到正常 → 伸懒腰 → 落回
+       两层身体交叉淡入淡出：flat body → round body
   ══════════════════════════════════════════════════ -->
   <div class="item">
     <svg class="pet" viewBox="-18 -18 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs><style>
-        /* 整个身体：压扁→拉伸→回正，慢速4s */
-        .wake-body {
-          transform-origin: 11px 18px;
-          animation: wake-stretch 4s ease-in-out infinite;
+        /* 整体上移：从趴地位置升起 */
+        .wake-all {
+          transform-origin: 11px 17px;
+          animation: wake-lift 4s ease-in-out infinite;
         }
-        /* 眼睛：细缝→睁大→正常 */
-        .wake-eye {
-          transform-origin: 11px 11px;
-          animation: wake-eye 4s ease-in-out infinite;
+        /* 扁身体：开始可见，慢慢消失 */
+        .wake-flat { animation: wake-flat-out 4s ease-in-out infinite; }
+        /* 圆身体：开始不可见，慢慢出现 + 伸懒腰 */
+        .wake-round {
+          transform-origin: 11px 12px;
+          animation: wake-round-in 4s ease-in-out infinite;
         }
-        /* 帽子随身体倾斜 */
-        .wake-hat {
-          transform-origin: 11px 5px;
-          animation: wake-hat 4s ease-in-out infinite;
+        .wake-eye { transform-origin:11px 11px; animation:wake-eye 4s ease-in-out infinite; }
+        .wake-arm-l { transform-origin:3.5px 13px; animation:wake-arm-l 4s ease-in-out infinite; }
+        .wake-arm-r { transform-origin:18px 13px; animation:wake-arm-r 4s ease-in-out infinite; }
+        .wake-base { animation:wake-base 4s ease-in-out infinite; }
+        .wake-z1 { animation:wake-z 4s ease-in-out infinite; animation-delay:0s; }
+        .wake-z2 { animation:wake-z 4s ease-in-out infinite; animation-delay:.3s; }
+        .wake-z3 { animation:wake-z 4s ease-in-out infinite; animation-delay:.6s; }
+        .wake-star { opacity:0; }
+        .wake-star1 { animation:wake-star-pop 4s ease-out infinite; animation-delay:2.2s; }
+        .wake-star2 { animation:wake-star-pop 4s ease-out infinite; animation-delay:2.4s; }
+        .wake-star3 { animation:wake-star-pop 4s ease-out infinite; animation-delay:2.6s; }
+
+        /* 整体从下往上升 */
+        @keyframes wake-lift {
+          0%,12%  { transform: translateY(4px); }
+          35%     { transform: translateY(0); }
+          50%     { transform: translateY(-6px); }
+          65%     { transform: translateY(1px); }
+          78%     { transform: translateY(-2px); }
+          90%,100%{ transform: translateY(0); }
         }
-        /* 左臂：从垂下→高举过头→落回 */
-        .wake-arm-l {
-          transform-origin: 5px 12px;
-          animation: wake-arm-l 4s ease-in-out infinite;
+        /* 扁身体淡出 */
+        @keyframes wake-flat-out {
+          0%,15%  { opacity: 1; }
+          35%,100%{ opacity: 0; }
         }
-        /* 右臂：同步高举 */
-        .wake-arm-r {
-          transform-origin: 17px 12px;
-          animation: wake-arm-r 4s ease-in-out infinite;
-        }
-        /* 嘴巴：睡觉直线→打哈欠弧→笑 */
-        .wake-mouth {
-          animation: wake-mouth 4s ease-in-out infinite;
-        }
-        /* zZZ 睡眠泡泡 */
-        .wake-z1 { animation: wake-z 4s ease-in-out infinite; animation-delay: 0s; }
-        .wake-z2 { animation: wake-z 4s ease-in-out infinite; animation-delay: 0.3s; }
-        .wake-z3 { animation: wake-z 4s ease-in-out infinite; animation-delay: 0.6s; }
-        .wake-shadow {
-          transform-origin: 11px 23px;
-          animation: wake-shadow 4s ease-in-out infinite;
-        }
-        /* 睡扁→伸懒腰→开心跳起→落回 */
-        @keyframes wake-stretch {
-          0%,18%  { transform: translateY(4px) scaleY(0.75) scaleX(1.18); }
-          40%     { transform: translateY(-6px) scaleY(1.28) scaleX(0.86); }
-          55%     { transform: translateY(-10px) scaleY(1.05) scaleX(0.97); }
-          68%     { transform: translateY(1px) scaleY(0.93) scaleX(1.06); }
-          78%     { transform: translateY(-3px) scaleY(1.04) scaleX(0.98); }
-          88%,100%{ transform: translateY(0) scaleY(1) scaleX(1); }
+        /* 圆身体淡入 + 伸懒腰拉伸 */
+        @keyframes wake-round-in {
+          0%,15%  { opacity: 0; transform: scaleY(0.7) scaleX(1.2); }
+          30%     { opacity: 1; transform: scaleY(1) scaleX(1); }
+          45%     { transform: scaleY(1.2) scaleX(0.88); }
+          60%     { transform: scaleY(0.93) scaleX(1.05); }
+          75%     { transform: scaleY(1.03) scaleX(0.98); }
+          85%,100%{ transform: scaleY(1) scaleX(1); }
         }
         @keyframes wake-eye {
-          0%,20%  { transform: scaleY(0.06); }
-          32%     { transform: scaleY(1.5); }
-          /* 醒来后变弯弯开心眼 */
-          50%,100%{ transform: scaleY(1); }
-        }
-        @keyframes wake-hat {
-          0%,18%  { transform: rotate(-20deg) translateY(2px); }
-          42%     { transform: rotate(10deg) translateY(-4px); }
-          58%     { transform: rotate(-5deg) translateY(-2px); }
-          75%,100%{ transform: rotate(0deg); }
+          0%,20%  { transform: scaleY(0.05); }
+          32%     { transform: scaleY(0.4); }
+          38%     { transform: scaleY(1.4); }
+          48%,100%{ transform: scaleY(1); }
         }
         @keyframes wake-arm-l {
-          0%,20%  { transform: rotate(35deg) translateY(3px); }
-          42%     { transform: rotate(-145deg) translateY(-3px); }
-          58%     { transform: rotate(-160deg) translateY(-4px); }
-          72%,100%{ transform: rotate(0deg); }
+          0%,20%  { transform: rotate(15deg) translateY(3px); }
+          45%     { transform: rotate(-140deg) translateY(-3px); }
+          58%     { transform: rotate(-150deg) translateY(-4px); }
+          75%,100%{ transform: rotate(0); }
         }
         @keyframes wake-arm-r {
-          0%,20%  { transform: rotate(-35deg) translateY(3px); }
-          42%     { transform: rotate(145deg) translateY(-3px); }
-          58%     { transform: rotate(160deg) translateY(-4px); }
-          72%,100%{ transform: rotate(0deg); }
+          0%,20%  { transform: rotate(-15deg) translateY(3px); }
+          45%     { transform: rotate(140deg) translateY(-3px); }
+          58%     { transform: rotate(150deg) translateY(-4px); }
+          75%,100%{ transform: rotate(0); }
         }
-        @keyframes wake-shadow {
-          0%,18%  { transform: scaleX(1.22); opacity: 0.4; }
-          55%     { transform: scaleX(0.65); opacity: 0.12; }
-          68%     { transform: scaleX(1.12); opacity: 0.35; }
-          88%,100%{ transform: scaleX(1); opacity: 0.3; }
+        @keyframes wake-base {
+          0%,18%  { opacity: 1; }
+          38%,100%{ opacity: 0; }
         }
         @keyframes wake-z {
-          0%,8%   { transform: translate(0,0) scale(0.5); opacity: 0.9; }
-          18%     { transform: translate(3px,-8px) scale(1.1); opacity: 0.7; }
-          28%     { transform: translate(6px,-16px) scale(0.5); opacity: 0; }
-          29%,100%{ transform: translate(0,0) scale(0); opacity: 0; }
+          0%,5%   { transform:translate(14px,4px) scale(.5); opacity:.9; }
+          15%     { transform:translate(18px,-4px) scale(.9); opacity:.6; }
+          25%     { transform:translate(20px,-10px) scale(.4); opacity:0; }
+          26%,100%{ opacity:0; transform:scale(0); }
         }
-        /* 醒来后爆出小星星 */
-        .wake-star { opacity: 0; }
-        .wake-star1 { animation: wake-star-pop 4s ease-out infinite; animation-delay: 1.8s; }
-        .wake-star2 { animation: wake-star-pop 4s ease-out infinite; animation-delay: 2.0s; }
-        .wake-star3 { animation: wake-star-pop 4s ease-out infinite; animation-delay: 2.2s; }
-        .wake-star4 { animation: wake-star-pop 4s ease-out infinite; animation-delay: 2.1s; }
         @keyframes wake-star-pop {
-          0%    { transform: translate(0,0) scale(0); opacity: 0; }
-          15%   { transform: translate(var(--tx), var(--ty)) scale(1.2); opacity: 1; }
-          40%   { transform: translate(var(--tx2), var(--ty2)) scale(0.8); opacity: 0.7; }
-          70%   { opacity: 0; }
-          100%  { opacity: 0; }
-        }
-      </style></defs>
-
-      <ellipse class="wake-shadow" cx="11" cy="23" rx="5" ry="0.65" fill="#c0c0c0"/>
-
-      <!-- zZZ 睡眠泡泡（前20%可见） -->
-      <text class="wake-z1" x="16" y="8"  font-size="3" fill="#94BDFF" font-family="system-ui" font-weight="bold">z</text>
-      <text class="wake-z2" x="18" y="4"  font-size="2.5" fill="#94BDFF" font-family="system-ui" font-weight="bold">z</text>
-      <text class="wake-z3" x="20" y="1"  font-size="2" fill="#94BDFF" font-family="system-ui" font-weight="bold">Z</text>
-
-      <g class="wake-body">
-        <!-- 左臂 -->
-        <g class="wake-arm-l">
-          <rect x="2" y="10" width="3.5" height="3.5" rx="1.75" fill="#8891b8" opacity="0.75"/>
-        </g>
-        <!-- 右臂 -->
-        <g class="wake-arm-r">
-          <rect x="16.5" y="10" width="3.5" height="3.5" rx="1.75" fill="#8891b8" opacity="0.75"/>
-        </g>
-        <!-- 身体 -->
-        <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <!-- 帽子 -->
-        <g class="wake-hat">
-          <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
-        </g>
-        <!-- 眼睛：睡时细缝，醒来睁大 -->
-        <g class="wake-eye">
-          <rect x="10" y="10" width="2" height="2" rx="1" fill="#111827"/>
-        </g>
-        <!-- 嘴：睡时直线，醒来大笑弧 -->
-        <path d="M8 13.5 Q11 17 14 13.5" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"
-              style="transform-origin:11px 14px; animation: wake-smile 4s ease-in-out infinite;"/>
-      </g>
-
-      <!-- 醒来跳起时爆出星星（绝对坐标，不在wake-body内） -->
-      <g style="transform-origin:11px 11px;">
-        <rect class="wake-star wake-star1" x="11" y="11" width="1.5" height="1.5" rx="0.4" fill="#FFD700"
-              style="--tx:-8px;--ty:-10px;--tx2:-10px;--ty2:-14px;"/>
-        <rect class="wake-star wake-star2" x="11" y="11" width="1.2" height="1.2" rx="0.3" fill="#FF6B35"
-              style="--tx:8px;--ty:-12px;--tx2:11px;--ty2:-16px;"/>
-        <rect class="wake-star wake-star3" x="11" y="11" width="1" height="1" rx="0.25" fill="#94BDFF"
-              style="--tx:-5px;--ty:-14px;--tx2:-7px;--ty2:-18px;"/>
-        <rect class="wake-star wake-star4" x="11" y="11" width="1.2" height="1.2" rx="0.3" fill="#4AFF3D"
-              style="--tx:10px;--ty:-8px;--tx2:13px;--ty2:-12px;"/>
-      </g>
-      <style>
-        @keyframes wake-smile {
-          0%,25%  { d: path("M8.5 14 Q11 14 13.5 14"); }
-          45%,100%{ d: path("M8 13.5 Q11 17 14 13.5"); }
+          0%    { transform:translate(0,0) scale(0); opacity:0; }
+          15%   { transform:translate(var(--tx),var(--ty)) scale(1.2); opacity:1; }
+          40%   { transform:translate(var(--tx2),var(--ty2)) scale(.8); opacity:.7; }
+          70%,100%{ opacity:0; }
         }
       </style>
+      <g id="wake-pz"><rect x="0" y="0" width="3" height="0.7"/><rect x="1.6" y="0.7" width="0.8" height="0.8"/><rect x="0.7" y="1.5" width="0.8" height="0.8"/><rect x="0" y="2.3" width="3" height="0.7"/></g>
+      </defs>
+
+      <!-- zzz 飘出 -->
+      <use href="#wake-pz" class="wake-z1" fill="#8891b8"/>
+      <use href="#wake-pz" class="wake-z2" fill="#a0a8c8"/>
+      <use href="#wake-pz" class="wake-z3" fill="#c0c8e0"/>
+
+      <!-- 底座（趴着时有，起来后消失） -->
+      <rect class="wake-base" x="2" y="18" width="18" height="1" rx="0.3" fill="#D9D9D9"/>
+
+      <g class="wake-all">
+        <!-- 手臂 -->
+        <g class="wake-arm-l"><rect x="1" y="12" width="3.5" height="3.5" rx="1.75" fill="#97A0C5" fill-opacity="0.7"/></g>
+        <g class="wake-arm-r"><path d="M16.34 14.35C17.08 13.6 18.28 13.6 19.03 14.34C19.77 15.08 19.77 16.28 19.03 17.03C18.29 17.77 17.09 17.77 16.35 17.03C15.6 16.29 15.6 15.09 16.34 14.35Z" fill="#B9C3EB"/></g>
+
+        <!-- 扁身体层（sleeping 造型，淡出） -->
+        <g class="wake-flat">
+          <rect x="3" y="7" width="16" height="10" rx="5" fill="#97A0C5"/>
+          <path d="M14.2041 6.85L7.7959 6.85L11 1.3L14.2041 6.85Z" fill="#FF5B24"/>
+          <path d="M8 11H11" stroke="black" stroke-linecap="round"/>
+          <path d="M7 13C8.85 15.12 12.15 15.12 14 13" stroke="black" stroke-linecap="round"/>
+        </g>
+
+        <!-- 圆身体层（idle 造型，淡入 + 伸懒腰） -->
+        <g class="wake-round">
+          <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
+          <path d="M14.2041 6.85L7.7959 6.85L11 1.3L14.2041 6.85Z" fill="#FF5B24"/>
+          <g class="wake-eye"><rect x="10" y="10" width="2" height="2" rx="1" fill="#111827"/></g>
+          <path d="M8 13.5 Q11 17 14 13.5" stroke="#111827" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+        </g>
+      </g>
+
+      <!-- 星星 -->
+      <rect class="wake-star wake-star1" x="11" y="8" width="1.5" height="1.5" rx="0.4" fill="#FFD700"
+            style="--tx:-8px;--ty:-10px;--tx2:-10px;--ty2:-14px;"/>
+      <rect class="wake-star wake-star2" x="11" y="8" width="1.2" height="1.2" rx="0.3" fill="#FF5B24"
+            style="--tx:8px;--ty:-12px;--tx2:11px;--ty2:-16px;"/>
+      <rect class="wake-star wake-star3" x="11" y="8" width="1" height="1" rx="0.25" fill="#94BDFF"
+            style="--tx:-5px;--ty:-14px;--tx2:-7px;--ty2:-18px;"/>
     </svg>
     <span>waking</span>
   </div>
@@ -884,7 +855,7 @@
         <!-- 身体 -->
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
         <!-- 帽子 -->
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <!-- 眼睛（专注眯眼） -->
         <rect x="9" y="11" width="4" height="1.2" rx="0.6" fill="#111827"/>
         <!-- 认真小嘴 -->
@@ -984,7 +955,7 @@
         <!-- 身体 -->
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
         <!-- 帽子 -->
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <!-- 眼睛（开心眯眼，专注状） -->
         <path d="M9 11 Q11 9.5 13 11" stroke="#111827" stroke-width="1.2" stroke-linecap="round" fill="none"/>
         <!-- 嘴巴（咬牙专注） -->
@@ -1115,7 +1086,7 @@
           <rect x="16" y="10" width="3.5" height="3.5" rx="1.75" fill="#8891b8" opacity="0.8"/>
         </g>
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round" transform="rotate(-6 11 5)"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35" transform="rotate(-6 11 5)"/>
         <!-- 半闭眼（向下弧线，困的感觉） -->
         <path d="M8.5 11.5 Q9.5 10.5 10.5 11.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
         <path d="M11.5 11.5 Q12.5 10.5 13.5 11.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
@@ -1182,7 +1153,7 @@
         <rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/>
         <rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/>
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <!-- 眼睛偏右看 -->
         <rect x="11.5" y="10" width="2" height="2" fill="#111827"/>
         <!-- 嘟嘴偏右 -->
@@ -1206,7 +1177,7 @@
         <rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/>
         <rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/>
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <!-- 眼睛偏左看 -->
         <rect x="8.5" y="10" width="2" height="2" fill="#111827"/>
         <!-- 嘟嘴偏左 -->
@@ -1238,7 +1209,7 @@
         <rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/>
         <rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/>
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
         <!-- 温和弯眼 -->
         <path d="M9.5 11 Q11 9.8 12.5 11" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
@@ -1265,7 +1236,7 @@
       <ellipse class="carry-shadow" cx="11" cy="22.5" rx="5" ry="0.6" fill="#c0c0c0"/>
       <g class="carry-body">
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
         <!-- 努力表情 -->
         <rect x="9" y="10.5" width="4" height="1" rx="0.5" fill="#111827"/>
@@ -1306,7 +1277,7 @@
         <rect x="2" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 3.5 10.5)"/>
         <rect x="17" y="9" width="3" height="3" rx="0.5" fill="#8891b8" opacity="0.7" transform="rotate(45 18.5 10.5)"/>
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
         <g class="look-eye"><rect x="10" y="10" width="2" height="2" fill="#111827"/></g>
         <path d="M8 13.5 Q11 16.5 14 13.5" stroke="#111827" stroke-width="1" stroke-linecap="round" fill="none"/>
@@ -1331,7 +1302,7 @@
       <ellipse class="read-shadow" cx="11" cy="22.5" rx="4" ry="0.6" fill="#c0c0c0"/>
       <g class="read-body">
         <rect x="5" y="6" width="12" height="12" rx="6" fill="#97A0C5"/>
-        <polygon points="11,1 15,7 7,7" fill="#FF6B35" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-linejoin="round"/>
+        <polygon points="11,1 15,7 7,7" fill="#FF6B35"/>
         <rect x="10" y="2" width="1" height="1" fill="#e8714a"/>
         <!-- 低头看（眼睛看下方） -->
         <rect x="10" y="11.5" width="2" height="1.5" rx="0.5" fill="#111827"/>

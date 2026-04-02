@@ -730,3 +730,228 @@ src/renderer/components/pet/
 src/process/pet/
 └── PetWindowManager.ts          # 监听 pet.enabled 变化，创建/销毁窗口
 ```
+
+---
+
+## 11. 设计资产规范 & 生产流程
+
+### 11.1 当前问题
+
+现在的设计资产存在几个问题：
+
+1. **没有统一基准造型** — 各状态的身体形状、帽子样式、手的形态不一致，导致状态切换时造型跳变
+2. **两套风格混在一起** — 部分状态用用户设计稿（三角帽 path、圆形手），部分用自画的（polygon 帽、菱形手）
+3. **资产嵌在 demo HTML 里** — 没有独立文件，不方便管理和复用
+4. **没有 JS 控制锚点** — SVG 元素没有 id，无法从外部控制眼睛追踪等动态效果
+
+### 11.2 clawd 的做法（参考）
+
+clawd 的 39 个 SVG 资产遵循清晰的规范：
+
+```
+assets/svg/
+├── clawd-static-base.svg         ← 基准造型（无动画，定义所有部件位置）
+├── clawd-idle-follow.svg         ← 每个状态一个独立文件
+├── clawd-working-typing.svg
+├── clawd-sleeping.svg
+└── ...
+```
+
+每个 SVG 文件：
+- **自包含**：造型 + CSS 动画在同一个文件里
+- **基于基准造型派生**：身体/帽子/手的基础坐标一致
+- **关键元素有 id**：`id="eyes-js"` / `id="body-js"` / `id="shadow-js"` 供 JS 外部操控
+- **统一 viewBox**：所有文件共享同一个坐标体系
+
+### 11.3 我们的资产规范（建议）
+
+#### 基准造型文件
+
+创建 `pet-static-base.svg` 定义所有部件的标准位置和样式：
+
+```svg
+<!-- assets/pet/pet-static-base.svg — 基准造型，所有状态从这里派生 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 23" width="300" height="300">
+  <!-- 阴影 -->
+  <ellipse id="shadow-js" cx="10.5" cy="21" rx="5" ry="0.6" fill="#c0c0c0" opacity="0.3"/>
+  
+  <!-- 身体组 -->
+  <g id="body-js">
+    <!-- 左手 -->
+    <rect id="hand-left" x="2" y="14" width="3" height="3" rx="1.5"
+          fill="#97A0C5" fill-opacity="0.7"/>
+    <!-- 身体 -->
+    <rect id="torso" x="5" y="7" width="12" height="12" rx="6" fill="#97A0C5"/>
+    <!-- 帽子 -->
+    <path id="hat" d="M14.2 6.85L7.8 6.85L11 1.3L14.2 6.85Z" fill="#FF5B24"/>
+    <!-- 右手 -->
+    <ellipse id="hand-right" cx="18" cy="14" rx="1.5" ry="1.5" fill="#B9C3EB"/>
+  </g>
+  
+  <!-- 表情组 -->
+  <g id="face-js">
+    <!-- 眼睛 -->
+    <g id="eyes-js">
+      <rect id="eye" x="10" y="11" width="2" height="2" rx="1" fill="black"/>
+    </g>
+    <!-- 嘴巴 -->
+    <path id="mouth" d="M9 14C9.95 15.43 12.05 15.43 13 14"
+          stroke="black" stroke-linecap="round" fill="none"/>
+  </g>
+</g>
+```
+
+#### 标准规范
+
+| 规范 | 值 | 说明 |
+|------|-----|------|
+| viewBox | `0 0 21 23`（设计坐标）或 `-18 -18 58 58`（显示坐标） | 需统一选一个 |
+| 身体 | `rect x=5 y=7 w=12 h=12 rx=6` fill=#97A0C5 | 圆角正方形 |
+| 帽子 | `path` 三角形 fill=#FF5B24 | 用用户设计稿的造型 |
+| 左手 | `rect rx=1.5` fill=#97A0C5 opacity=0.7 | 灰色圆形 |
+| 右手 | `ellipse` fill=#B9C3EB | 浅蓝色圆形 |
+| 眼睛 | `rect rx=1` fill=black | 单眼，圆角方块 |
+| 嘴巴 | `path` 弧线 stroke=black | 微笑弧线 |
+| 阴影 | `ellipse` fill=#c0c0c0 opacity=0.3 | 底部椭圆 |
+
+#### JS 控制锚点
+
+每个 SVG 必须保留以下 id，供外部 JS 操控：
+
+| id | 用途 | 外部操作 |
+|----|------|---------|
+| `eyes-js` | 眼睛组 | 鼠标追踪时 translate 偏移 |
+| `body-js` | 身体组 | 鼠标追踪时微倾 |
+| `shadow-js` | 阴影 | 鼠标追踪时拉伸 |
+| `face-js` | 表情组 | 状态切换时整体控制 |
+
+### 11.4 资产目录结构
+
+```
+assets/pet/
+├── pet-static-base.svg              ← 基准造型（无动画）
+├── states/
+│   ├── idle.svg                     ← 每个状态一个独立 SVG
+│   ├── thinking.svg
+│   ├── working.svg
+│   ├── happy.svg
+│   ├── sleeping.svg
+│   ├── waking.svg
+│   ├── error.svg
+│   ├── notification.svg
+│   ├── dragging.svg
+│   ├── yawning.svg
+│   ├── dozing.svg
+│   ├── sweeping.svg
+│   ├── building.svg
+│   ├── juggling.svg
+│   ├── carrying.svg
+│   ├── attention.svg
+│   ├── poke-left.svg
+│   ├── poke-right.svg
+│   ├── random-look.svg
+│   └── random-read.svg
+└── docs/
+    ├── pet-demo-v6.html             ← 设计预览（保留）
+    └── pet-interactive-demo.html    ← 交互预览（保留）
+```
+
+### 11.5 从资产到代码的完整流程
+
+```
+┌───────────────────────────────────────────────────────────┐
+│  Step 1: 设计基准                                          │
+│  创建 pet-static-base.svg                                  │
+│  定义身体/帽子/手/眼/嘴的标准位置和颜色                      │
+└──────────────┬────────────────────────────────────────────┘
+               ▼
+┌───────────────────────────────────────────────────────────┐
+│  Step 2: 派生各状态 SVG                                    │
+│  基于基准造型，调整姿势+加道具+写 CSS 动画                   │
+│  每个状态导出为独立 .svg 文件                                │
+│  保留 id="eyes-js" 等锚点                                   │
+└──────────────┬────────────────────────────────────────────┘
+               ▼
+┌───────────────────────────────────────────────────────────┐
+│  Step 3: 验证预览                                          │
+│  在 pet-demo-v6.html 中排列查看所有状态                     │
+│  在 pet-interactive-demo.html 中测试交互+状态切换           │
+│  确认状态之间切换不跳变                                      │
+└──────────────┬────────────────────────────────────────────┘
+               ▼
+┌───────────────────────────────────────────────────────────┐
+│  Step 4: 集成到 Electron 宠物窗口                          │
+│                                                           │
+│  方案 A: <object> 标签加载 SVG（clawd 的做法）              │
+│  ┌─ pet.html ──────────────────────────────────────┐      │
+│  │ <object id="pet" type="image/svg+xml"           │      │
+│  │         data="assets/pet/states/idle.svg"/>      │      │
+│  │                                                  │      │
+│  │ 切换状态 → 修改 data 属性指向不同 SVG 文件         │      │
+│  │ 眼睛追踪 → contentDocument.getElementById        │      │
+│  └──────────────────────────────────────────────────┘      │
+│                                                           │
+│  方案 B: innerHTML 注入 SVG 字符串（我们 demo 的做法）      │
+│  ┌─ pet.html ──────────────────────────────────────┐      │
+│  │ const SVGS = { idle: '...', working: '...' }    │      │
+│  │ container.innerHTML = SVGS[state]                │      │
+│  │                                                  │      │
+│  │ 切换状态 → 替换 innerHTML                         │      │
+│  │ 眼睛追踪 → querySelector                         │      │
+│  └──────────────────────────────────────────────────┘      │
+│                                                           │
+│  方案 C: React 组件（当前 TSX 方案）                        │
+│  ┌─ PetApp.tsx ────────────────────────────────────┐      │
+│  │ const Component = STATE_COMPONENTS[state]        │      │
+│  │ return <Component />                             │      │
+│  │                                                  │      │
+│  │ 切换状态 → React 重新渲染                         │      │
+│  │ 眼睛追踪 → ref + DOM 操作                        │      │
+│  └──────────────────────────────────────────────────┘      │
+└───────────────────────────────────────────────────────────┘
+```
+
+### 11.6 三种集成方案对比
+
+| | 方案 A: `<object>` 加载 SVG | 方案 B: innerHTML 注入 | 方案 C: React TSX 组件 |
+|---|---|---|---|
+| **clawd 用的** | ✅ | | |
+| **资产格式** | 独立 .svg 文件 | JS 字符串模板 | TSX 组件 |
+| **眼睛追踪** | `contentDocument.getElementById` | `querySelector` | ref + DOM |
+| **状态切换** | 改 `data` 属性 | 替换 innerHTML | React 重渲染 |
+| **SVG 加载** | 异步（需等 load 事件） | 同步（立即可用） | 同步 |
+| **设计师友好** | ✅ 直接编辑 .svg 文件 | ❌ 要改 JS 字符串 | ❌ 要改 TSX |
+| **CSS 隔离** | ✅ 天然隔离（各文件独立） | ❌ class 名可能冲突 | ❌ 同上 |
+| **构建依赖** | 无（静态文件） | 无 | 需要 React + 打包 |
+| **宠物窗口适配** | 最简单 | 简单 | 需要给宠物窗口配 React |
+
+**推荐：方案 A（`<object>` 加载独立 SVG）**
+
+理由：
+1. clawd 已验证可行，直接参考
+2. 设计师友好——改 SVG 文件就行，不用碰代码
+3. CSS 动画天然隔离，不用担心 class 名冲突
+4. 宠物窗口是独立 BrowserWindow，不需要 React 那套打包体系
+5. 眼睛追踪通过 `contentDocument` 访问 SVG 内部元素，clawd 的代码可直接参考
+
+### 11.7 下一步行动
+
+```
+1. 创建 pet-static-base.svg（基准造型）
+   → 统一所有部件的位置、颜色、比例
+   → 基于用户设计稿风格
+
+2. 基于基准，重做所有 20 个状态 SVG
+   → 每个状态一个独立 .svg 文件
+   → 统一 viewBox、帽子、手的造型
+   → 保留 id 锚点
+
+3. 更新 demo 验证
+   → pet-demo-v6.html 用独立 SVG 文件
+   → pet-interactive-demo.html 用 <object> 加载
+
+4. 实现 Electron 宠物窗口
+   → pet.html 用 <object> 加载 SVG
+   → PetWindowManager.ts 管理窗口
+   → 切换状态 = 切换 <object> 的 data 属性
+```
